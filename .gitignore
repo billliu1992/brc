@@ -1,0 +1,9 @@
+##DJANGO GITIGNORE https://github.com/github/gitignore/blob/master/Django.gitignore
+
+*.log
+*.pot
+*.pyc
+local_settings.py
+
+#Adding the database
+brc.db
