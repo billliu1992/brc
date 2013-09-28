@@ -1,0 +1,16 @@
+<html>
+	<head>
+		<title>Readings</title>
+	</head>
+	
+	<body>
+		<!-- Submit reading form -->
+		<form action="submit_reading" method="POST">
+			{% csrf_token %}
+			<label for="reading">Chapter:</label>
+			<input type="text" name="reading" id="reading" />
+			<input type="submit" value="Submit" />
+		</form>
+			
+	</body>
+</html>
