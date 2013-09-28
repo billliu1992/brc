@@ -5,7 +5,10 @@ from django.conf.urls import patterns, include, url
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-	url(r'^$', 'brc.views.index')
+	url(r'^$', 'brc.views.index'),
+	url(r'^login', 'brc.views.authenticate_login'),
+	
+	url(r'^readings/', include('readings.urls'))
     # Examples:
     # url(r'^$', 'brc.views.home', name='home'),
     # url(r'^brc/', include('brc.foo.urls')),

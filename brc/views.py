@@ -1,9 +1,31 @@
 from django.http import HttpResponse
-from django.shortcuts import render
-from django.shortcuts import render_to_response
-from django.template import RequestContext, loader
+from django.shortcuts import render_to_response, redirect
+from django.template import RequestContext
+from django.contrib.auth import authenticate, login
 
 def index(request):
-	template = loader.get_template('main.html')
+	"""
+	Index
+	For the index page
+	"""
 	context = RequestContext(request, {})
-	return HttpResponse(template.render(context))
+	return render_to_response('main.html', context)
+	
+def authenticate_login(request):
+	"""
+	Login
+	Grabs the user details from the login page and logs in
+	"""
+	#get the username and password
+	usernam = request.POST["username"]
+	passwor = request.POST["password"]
+	
+	user = authenticate(username=usernam, password = passwor)
+	
+	if user is not None:
+		login(request, user)
+		context = RequestContext(request, {})
+		return redirect('readings/')
+	else:
+		return redirect("")
+		

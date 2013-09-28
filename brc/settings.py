@@ -1,4 +1,6 @@
 # Django settings for brc project.
+import os
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -107,10 +109,13 @@ ROOT_URLCONF = 'brc.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'brc.wsgi.application'
 
+PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
+
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+	PROJECT_PATH + '/templates/'
 )
 
 INSTALLED_APPS = (
@@ -121,7 +126,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
+    'readings',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

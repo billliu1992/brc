@@ -1,5 +1,8 @@
-from django.conf.urls import pattersn, include, url
+from django.conf.urls import patterns, include, url
 
-from django.ctrib import admin
+from readings import views
 
-admin.autodiscover()
+urlpatterns = patterns('',
+	url(r'^$', 'readings.views.readings_page'),
+	url(r'^submit_reading', 'readings.views.add_reading')
+)
