@@ -27,5 +27,5 @@ def authenticate_login(request):
 		context = RequestContext(request, {})
 		return redirect('readings/')
 	else:
-		return redirect("")
+		return redirect("/")
 		

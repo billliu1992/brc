@@ -1,0 +1,31 @@
+import datetime
+
+def parse_date(date_str):
+	"""
+	Parses the date passed in through the argument date_str
+	"""
+	date_str = date_str.replace("-", "/")
+	
+	date_fields = date_str.split("/")
+	month = date_fields[0]
+	day = date_fields[1]
+	year = date_fields[2]
+	
+	if(len(year) == 2):	#changes the year from a 2 digit to a 4 digit date
+		year = "20" + year
+
+	#Validate
+	try:
+		day_int = int(day)
+		month_int = int(month)
+		year_int = int(year)
+		
+		print(str(day_int) + " " + str(month_int) + " " + str(year_int))
+		
+		date = datetime.datetime(year_int, month_int, day_int)
+	except ValueError:
+		print("VALUE ERROR")
+		date = None
+		
+	return date
+	

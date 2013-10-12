@@ -9,8 +9,14 @@
 			{% csrf_token %}
 			<label for="reading">Chapter:</label>
 			<input type="text" name="reading" id="reading" />
+			<label for="date">Date:</label>
+			<input type="text" name="date" id="date" />
+			<label for="date">(MM/DD/YYYY)</label>
 			<input type="submit" value="Submit" />
 		</form>
-			
+		<!-- Show all readings -->
+		{% for reading, date in readings %}
+			{{reading}} - {{date}}<br />
+		{% endfor %}
 	</body>
 </html>

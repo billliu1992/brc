@@ -7,9 +7,11 @@ class ReadingEntry(models.Model):
 	date = models.DateField()
 	user = models.ForeignKey(User)
 	
+class ReadingSchedule(models.Model):
+	title = models.CharField(max_length=100)
+	
 class ReadingScheduleEntry(models.Model):
 	reading = models.CharField(max_length=50)
-	startDate = models.DateField()
-	endDate = models.DateField()
-	
+	readDate = models.DateField()
+	schedule = models.ForeignKey(ReadingSchedule)
 	
