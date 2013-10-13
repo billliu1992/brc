@@ -3,6 +3,7 @@ import datetime
 def parse_date(date_str):
 	"""
 	Parses the date passed in through the argument date_str
+	Parses in the format MM/DD/YYYY
 	"""
 	date_str = date_str.replace("-", "/")
 	
@@ -28,4 +29,17 @@ def parse_date(date_str):
 		date = None
 		
 	return date
+
+def parse_date_iso(iso_date_str):
+	"""
+	Parse the date passed in through the argument iso_date_str
+	Parses in the ISO format YYYY-MM-DD
+	Does not do as many validation checks, because this method should not be used to parse user inputed data
+	"""
+	date_fields = iso_date_str.split("-")
+	print(str(date_fields))
+	month = date_fields[0]
+	day = date_fields[1]
+	year = date_fields[2]
 	
+	datetime.datetime(year_int, month_int, day_int)

@@ -15,8 +15,10 @@
 			<input type="submit" value="Submit" />
 		</form>
 		<!-- Show all readings -->
-		{% for reading, date in readings %}
-			{{reading}} - {{date}}<br />
+		{% for reading, webfriendlyreading, month, day, year in readings %}
+			{{reading}} - {{month}}/{{day}}/{{year}}
+			<a href="/readings/delete_reading/{{webfriendlyreading}}/{{month}}/{{day}}/{{year}}">Delete</a>
+			<br />
 		{% endfor %}
 	</body>
 </html>
