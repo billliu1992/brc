@@ -1,10 +1,11 @@
 BRC
 ====
 
-Installation:
+Setting up your dev environment:
 ----
-*On Linux*
-1. Install Python2.7 and virtualenv *sudo apt-get install python2.7 virtualenv*
+*On Linux (assumes your package manager is apt and your repos are up to date)*
+
+1. Install Python2.7, git, and virtualenv *sudo apt-get install python2.7 virtualenv git*
 
 2. Create a folder for BRC
 
@@ -14,12 +15,18 @@ Installation:
 
 5. Install Django on your virtual environment *pip install django*
 
-6. Download the code from github *git clone https://github.com/billliu1992/brc.git*
-
 *On Windows*
 
 *On Mac*
 
+
+Getting the code:
+----
+1. Fork the code from github *On BRC's github page, click the "Fork" on the top right*
+
+2. Download the code from github *On linux terminal: git clone https://github.com/YOUR_GITHUB_USERNAME/brc.git*
+
+3. *OPTIONAL* Add other contributer's forks *On linux terminal: git remote add ANY_NAME https://github.com/OTHER_GITHUB_USERNAME/brc.git*
 
 Running for development:
 ----
@@ -29,4 +36,4 @@ Running for development:
 
 3. Create the database *python manage.py syncdb*
 
-4. Run the server*python manage.py runserver*
+4. Run the server *python manage.py runserver*
