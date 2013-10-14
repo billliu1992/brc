@@ -1,0 +1,23 @@
+<html>
+	<head>
+		<title>Readings</title>
+	</head>
+	
+	<body>
+		<!-- Submit reading form -->
+		<form action="/readings/schedules/new/" method="POST">
+			{% csrf_token %}
+			<label for="schedule_name">Schedule Name:</label>
+			<input type="text" name="schedule_name" id="schedule_name" />
+			<input type="submit" value="Add" />
+		</form>
+		<!-- Show all schedules -->
+		{% for title, webfriendlytitle in schedules %}
+			{{title}}
+			<a href="/readings/schedules/{{webfriendlyreading}}/">Edit</a>
+			<br />
+		{% endfor %}
+		<!-- Consistency -->
+		{{consistency}}
+	</body>
+</html>
