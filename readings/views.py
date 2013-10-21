@@ -54,18 +54,19 @@ def new_schedule(request):
 	"""
 	new_schedule_name = request.POST["schedule_name"]
 	
-	print(new_schedule_name)
-	
 	#check to make sure that the name is not taken
 	if(len(ReadingSchedule.objects.filter(title = new_schedule_name)) != 0):
 		return redirect('/')	#TODO Change this to something better once templates are done
 	if(new_schedule_name.replace(" ", "").isalnum() == False):
+		return redirect('/')	#TODO Change this to something better once templates are done
+	if(len(new_schedule_name) == 0):
 		return redirect('/')	#TODO Change this to something better once templates are done
 	
 	new_schedule = ReadingSchedule()
 	new_schedule.title = new_schedule_name
 	new_schedule.web_friendly_title = new_schedule_name.replace(" ", "")
 	new_schedule.creator = request.user
+	new_schedule.start_date = datetime.date.today()
 	new_schedule.save()
 	
 	return redirect("/readings/schedules/")
@@ -75,7 +76,26 @@ def edit_schedule_page(request, schedule):
 	Page for editing the schedule
 	"""
 	
-	return render_to_response('edit_reading_schedule.html')
+	#check to make sure user is logged in
+	if(not request.user.is_authenticated()):
+		return redirect('/')	#TODO change this...
+		
+	#get the schedule
+	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
+	
+	#makes sure that it is the creator
+	if(request.user != requested_schedule.creator):
+		return redirect('/')	#TODO Change this...
+	
+	#get the readings to put on the view
+	schedule_entries = ReadingScheduleEntry.objects.filter(schedule = requested_schedule)
+	
+	entry_text = []
+	for entry in schedule_entries:
+		entry_text.append((entry.reading, entry.day_num))
+	
+	context = RequestContext(request, {"title":requested_schedule.title, "entries":entry_text, "entries_length":range(0,len(entry_text))})
+	return render_to_response('readings/edit_reading_schedule.html', context)
 	
 def delete_schedule(request, schedule):
 	"""
@@ -91,7 +111,48 @@ def submit_schedule(request, schedule):
 	Submit modifications to a schedule
 	"""
 	
-	return redirect("/readings/schedules/")
+	num_entries = int(request.POST["total_num_entries"])	#TODO FIX ME AFTER DONE DEBUGGING
+	
+	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
+	
+	ReadingScheduleEntry.objects.filter(schedule = requested_schedule).delete()
+	
+	for i in range(0, num_entries+1):
+		new_reading = reading_parser.parse_reading(request.POST["reading_" + str(i)])
+		new_day_num = request.POST["day_num_" + str(i)]
+		
+		if(new_reading != None and len(new_reading) != 0 and new_day_num.isnumeric()):
+			for reading in new_reading:
+				new_entry = ReadingScheduleEntry()
+				new_entry.schedule = requested_schedule
+				new_entry.day_num = new_day_num
+				new_entry.reading = reading
+				new_entry.save()
+	
+	return redirect("/readings/schedules/" + schedule)
+	
+def add_schedule_reading(request):
+	"""
+	Adds an entry to the reading schedule
+	"""
+	
+	#get the reading
+	reading_text = request.POST["reading"]
+	date_text = request.POST["date"]
+	
+	#parse the reading
+	full_readings = reading_parser.parse_reading(reading_text)
+	if(full_readings == None):
+		return redirect("/")	#TODO Once templates are done, make this redirect/render something prettier
+	
+	for full_reading in full_readings:
+		reading = ReadingScheduleEntry()
+		reading.user = request.user
+		reading.reading = full_reading
+		reading.day_num = date
+		reading.save()
+	
+	return redirect('/readings/schedules/')
 	
 def add_reading(request):
 	"""
@@ -109,15 +170,16 @@ def add_reading(request):
 	if(date == None):
 		return redirect("/")	#TODO Once templates are done, make this redirect/render something prettier
 	#parse the reading
-	full_reading = reading_parser.parse_reading(reading_text)
-	if(full_reading == None):
+	full_readings = reading_parser.parse_reading(reading_text)
+	if(full_readings == None):
 		return redirect("/")	#TODO Once templates are done, make this redirect/render something prettier
 	
-	reading = ReadingEntry()
-	reading.user = request.user
-	reading.reading = full_reading
-	reading.date = date
-	reading.save()
+	for full_reading in full_readings:
+		reading = ReadingEntry()
+		reading.user = request.user
+		reading.reading = full_reading
+		reading.date = date
+		reading.save()
 	
 	return redirect('/readings/')
 	
@@ -134,7 +196,7 @@ def delete_reading(request, reading, month, day, year):
 	
 	date_obj = datetime.datetime(int(year), int(month), int(day))
 	
-	ReadingEntry.objects.get(date = date_obj, reading = full_reading, user = request.user).delete()
+	ReadingEntry.objects.get(date = date_obj, reading = full_reading[0], user = request.user).delete()
 	
 	return redirect('/readings/')
 	

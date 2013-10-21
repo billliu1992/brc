@@ -12,10 +12,11 @@ class ReadingSchedule(models.Model):
 	web_friendly_title = models.CharField(max_length=100)
 	creator = models.ForeignKey(User, related_name = "created_sched")
 	signed_up = models.ManyToManyField(User, related_name = "subscribed_sched")
+	start_date = models.DateField()
 	
 class ReadingScheduleEntry(models.Model):
 	reading = models.CharField(max_length=50)
-	readDate = models.DateField()
+	day_num = models.IntegerField()
 	schedule = models.ForeignKey(ReadingSchedule)
 	#class Meta:
 	#	order_with_respect_to = 'readDate'

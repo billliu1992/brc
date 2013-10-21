@@ -43,3 +43,10 @@ def parse_date_iso(iso_date_str):
 	year = date_fields[2]
 	
 	datetime.datetime(year_int, month_int, day_int)
+
+def parse_date_to_string(date):
+	"""
+	Gets a dae object then returns a string representation
+	In format MM/DD/YYYY
+	"""
+	return str(date.month) + "/" + str(date.day) + "/" + str(date.year)

@@ -95,11 +95,16 @@ def parse_reading(reading_str):
 	book = reading_str[:chapter_index]
 	chapter = reading_str[chapter_index:]
 	
-	#make sure that the chapter is a number only
-	try:
-		int(chapter)
-	except ValueError:
-		return None
+	#handles inputting multiple chapters on the same line
+	chapters_str = chapter.split("-")
+	chapters = []
+	if(len(chapters_str) == 1):	#only one chapter
+		if(chapter.isnumeric()):
+			chapters = [chapter]
+	elif(len(chapters_str) == 2):
+		if(chapters_str[0].isnumeric() and chapters_str[1].isnumeric()):
+			chapters = range(int(chapters_str[0]), int(chapters_str[1])+1)
+		
 	
 	#get the correct book name
 	book_name = ""
@@ -109,9 +114,15 @@ def parse_reading(reading_str):
 	
 	if(book_name == ""):	#not a valid book
 		return None
-		
-	if(int(chapter) in range(1, BIBLE_CHAPTERS[full_book_name]+1)):	#checks to make sure that the chapter exists
-		return book_name + " " + chapter
-	else:
+	
+	#return all the chapters in a list of strings with format BOOK CHAPTER
+	chapters_read = []
+	for i in chapters:
+		if(int(i) in range(1, BIBLE_CHAPTERS[book_name]+1)):	#checks to make sure that the chapter exists
+			chapters_read.append(book_name + " " + str(i))
+	
+	if(len(chapters_read) == 0):
 		return None
+	else:
+		return chapters_read
 	
