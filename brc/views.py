@@ -8,6 +8,10 @@ def index(request):
 	Index
 	For the index page
 	"""
+	#go to readings page if logged in
+	if(request.user.is_authenticated()):
+		return redirect('readings/')
+	
 	context = RequestContext(request, {})
 	return render_to_response('main.html', context)
 	

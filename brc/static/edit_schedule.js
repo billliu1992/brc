@@ -22,6 +22,7 @@ function hideInputShowDisplay(entry_num)
 function hideAllInputShowDisplay()
 {
 	var total_entries_num = $("#entries_num").val()
+	console.log(total_entries_num);
 	for(var i = 0; i < total_entries_num; i++)
 	{
 		hideInputShowDisplay(i);
@@ -45,7 +46,6 @@ function showInputHideDisplay(entry_num)
 
 function clickOnEntry(entry_num)
 {
-	console.log("HELLO: " + entry_num)
 	hideAllInputShowDisplay()
 	showInputHideDisplay(entry_num)
 }
@@ -64,12 +64,14 @@ function registerClicks(total_entries_num)
 
 function registerClick(entry_num)
 {
-	console.log(entry_num + " REGISTERED")
 	$("#row_"+entry_num).click(function() {clickOnEntry(entry_num)});
+	console.log("REGISTERING FOR: " + "#row_"+entry_num)
 }
 
-function addEntry(entry_num)
+function addEntry()
 {
+	entry_num = parseInt($("#entries_num").val());
+	
 	//Add the html to the page
 	var new_entry_html = "<tr id=\"row_" + entry_num + "\">" +
 							"<td>" +

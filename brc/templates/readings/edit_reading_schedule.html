@@ -4,17 +4,24 @@
 		<script src="/static/edit_schedule.js?v=00001"></script>
 		<script src="http://code.jquery.com/jquery-2.0.3.js"></script>
 		<script>
-			var list_num = {{entries_length|length}}
 			$(function() {
-			
+				//register adding a new column
 				$("#add_reading").click(function() {
-					addEntry(list_num);
-					list_num += 1;
+					addEntry();
+					
+					console.log($("#entries_num").val());
+					
+					return false;
 				});
 				
-				registerClicks(list_num)
+				$("#submit_button").click(function() {
+					hideAllInputShowDisplay();
+					return true;
+				});
 				
-				hideAllInputShowDisplay()
+				registerClicks({{entries_table|length|add:'1'}});
+				
+				hideAllInputShowDisplay();
 				
 			});
 		</script>
@@ -29,24 +36,27 @@
 			<br />
 			
 			<table id="entries_table">
-			{% for index in entries_length %}
-				<tr id="row_{{index}}">
+			{% for entry in entries %}
+				<tr id="row_{{entry.0}}">
 					<td>
-						<label for="day_num_{{index}}">Day Number:</label>
-						<input type="text" name="day_num_{{index}}" id="day_num_{{index}}" class="entry_input" size="3" style="visibility:hidden"/>
-						<p id="display_day_num_{{index}}" class="entry_display"></p>
+						<label for="day_num_{{entry.0}}">Day Number:</label>
+						<input type="text" name="day_num_{{entry.0}}" id="day_num_{{entry.0}}" class="entry_input" size="3" value="{{entry.2}}"/>
+						<span  id="display_day_num_{{entry.0}}" class="entry_display">{{entry.2}}</span>
 					</td>
 					<td>
-						<label for="reading_{{index}}">Reading:</label>
-						<input type="text" name="reading_{{index}}" id="reading_{{index}}" class="entry_input" style="visibility:hidden"/>
-						<p id="display_reading_{{index}}" class="entry_display"></p>
+						<label for="reading_{{entry.0}}">Reading:</label>
+						<input type="text" name="reading_{{entry.0}}" id="reading_{{entry.0}}" class="entry_input" value="{{entry.1}}"/>
+						<span id="display_reading_{{entry.0}}" class="entry_display">{{entry.1}}</span>
 					</td>
 				</tr>
+				
 			{% endfor %}
 			</table>
-			
-			<input type="hidden" id="entries_num" value="{{entries_length|length|add:'-1'}}">
+			{{entries_table|length|add:'1'}}
+			<input type="hidden" name="entries_num" id="entries_num" value="{{entries_table|length|add:'1'}}">
+			<button id="add_reading">Add Reading</button><br /><br />
+			<input type="submit" id="submit_button" value="Submit Schedule" />
 		</form>
-		<button id="add_reading">Add Reading</button>
+		
 	</body>
 </html>

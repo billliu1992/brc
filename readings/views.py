@@ -91,10 +91,11 @@ def edit_schedule_page(request, schedule):
 	schedule_entries = ReadingScheduleEntry.objects.filter(schedule = requested_schedule)
 	
 	entry_text = []
-	for entry in schedule_entries:
-		entry_text.append((entry.reading, entry.day_num))
+	for i in range(len(schedule_entries)):
+		print(str(i) + " " + str(schedule_entries[i].reading) + " " + str(schedule_entries[i].day_num))
+		entry_text.append((i, schedule_entries[i].reading, schedule_entries[i].day_num))
 	
-	context = RequestContext(request, {"title":requested_schedule.title, "entries":entry_text, "entries_length":range(0,len(entry_text))})
+	context = RequestContext(request, {"title":requested_schedule.title, "entries":entry_text})
 	return render_to_response('readings/edit_reading_schedule.html', context)
 	
 def delete_schedule(request, schedule):
@@ -111,23 +112,26 @@ def submit_schedule(request, schedule):
 	Submit modifications to a schedule
 	"""
 	
-	num_entries = int(request.POST["total_num_entries"])	#TODO FIX ME AFTER DONE DEBUGGING
+	num_entries = int(request.POST["entries_num"])
 	
 	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
 	
 	ReadingScheduleEntry.objects.filter(schedule = requested_schedule).delete()
 	
-	for i in range(0, num_entries+1):
+	for i in range(0, num_entries):
 		new_reading = reading_parser.parse_reading(request.POST["reading_" + str(i)])
 		new_day_num = request.POST["day_num_" + str(i)]
 		
-		if(new_reading != None and len(new_reading) != 0 and new_day_num.isnumeric()):
-			for reading in new_reading:
-				new_entry = ReadingScheduleEntry()
-				new_entry.schedule = requested_schedule
-				new_entry.day_num = new_day_num
-				new_entry.reading = reading
-				new_entry.save()
+		if(new_reading != None and len(new_reading) != 0 and unicode(new_day_num).isnumeric()):
+			for readings in new_reading:
+				print(str(reading_parser.parse_reading(readings)))
+				for reading in reading_parser.parse_reading(readings):
+					print(reading)
+					new_entry = ReadingScheduleEntry()
+					new_entry.schedule = requested_schedule
+					new_entry.day_num = new_day_num
+					new_entry.reading = reading
+					new_entry.save()
 	
 	return redirect("/readings/schedules/" + schedule)
 	

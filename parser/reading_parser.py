@@ -99,10 +99,10 @@ def parse_reading(reading_str):
 	chapters_str = chapter.split("-")
 	chapters = []
 	if(len(chapters_str) == 1):	#only one chapter
-		if(chapter.isnumeric()):
+		if(unicode(chapter).isnumeric()):
 			chapters = [chapter]
 	elif(len(chapters_str) == 2):
-		if(chapters_str[0].isnumeric() and chapters_str[1].isnumeric()):
+		if(unicode(chapters_str[0]).isnumeric() and unicode(chapters_str[1]).isnumeric()):
 			chapters = range(int(chapters_str[0]), int(chapters_str[1])+1)
 		
 	
