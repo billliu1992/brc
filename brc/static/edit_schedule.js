@@ -12,20 +12,19 @@ function hideInputShowDisplay(entry_num)
 	$("#display_day_num_"+entry_num).text(new_day_num);
 	$("#display_reading_"+entry_num).text(new_reading);
 	
-	$("#day_num_"+entry_num).attr("style", "visibility:hidden");
-	$("#reading_"+entry_num).attr("style", "visibility:hidden");
+	$("#day_num_"+entry_num).attr("style", "display:none");
+	$("#reading_"+entry_num).attr("style", "display:none");
 	
-	$("#display_day_num_"+entry_num).attr("style", "visibility:visible");
-	$("#display_reading_"+entry_num).attr("style", "visibility:visible");
+	$("#display_day_num_"+entry_num).attr("style", "display:inline");
+	$("#display_reading_"+entry_num).attr("style", "display:inline");
 }
 
 function hideAllInputShowDisplay()
 {
 	var total_entries_num = $("#entries_num").val()
-	console.log(total_entries_num);
-	for(var i = 0; i < total_entries_num; i++)
+	for(var i = 1; i <= total_entries_num; i++)
 	{
-		hideInputShowDisplay(i);
+		hideInputShowDisplay(i-1);
 	}
 }
 
@@ -37,11 +36,11 @@ function showInputHideDisplay(entry_num)
 	$("#day_num_"+entry_num).val(new_day_num);
 	$("#reading_"+entry_num).val(new_reading);
 
-	$("#day_num_"+entry_num).attr("style", "visibility:visible");
-	$("#reading_"+entry_num).attr("style", "visibility:visible");
+	$("#day_num_"+entry_num).attr("style", "display:inline");
+	$("#reading_"+entry_num).attr("style", "display:inline");
 	
-	$("#display_day_num_"+entry_num).attr("style", "visibility:hidden");
-	$("#display_reading_"+entry_num).attr("style", "visibility:hidden");
+	$("#display_day_num_"+entry_num).attr("style", "display:none");
+	$("#display_reading_"+entry_num).attr("style", "display:none");
 }
 
 function clickOnEntry(entry_num)
@@ -56,16 +55,16 @@ function clickOnEntry(entry_num)
  */
 function registerClicks(total_entries_num)
 {
-	for(var i = 0; i < total_entries_num; i++)
+	for(var i = 1; i <= total_entries_num; i++)
 	{
-		registerClick(i)
+		registerClick(i-1)
 	}
 }
 
 function registerClick(entry_num)
 {
+	console.log("REGISTERING: " + entry_num)
 	$("#row_"+entry_num).click(function() {clickOnEntry(entry_num)});
-	console.log("REGISTERING FOR: " + "#row_"+entry_num)
 }
 
 function addEntry()
@@ -74,15 +73,19 @@ function addEntry()
 	
 	//Add the html to the page
 	var new_entry_html = "<tr id=\"row_" + entry_num + "\">" +
-							"<td>" +
+							"<td style=\"display:table-cell\">" +
 								"<label for=\"day_num_" + entry_num + "\" id=\"label_day_num_" + entry_num + "\">Day Number: </label>" +
-								"<input type=\"text\" name=\"day_num_" + entry_num + "\" id=\"day_num_" + entry_num + "\" class=\"entry_input\" size=\"3\"/>" +
-								"<p id=\"display_day_num_" + entry_num + "\" class=\"entry_display\"></p>" + 
 							"</td>" +
-							"<td>" +
+							"<td style=\"display:table-cell; width:35px\">" +
+								"<span id=\"display_day_num_" + entry_num + "\" class=\"entry_display\"></span>" + 
+								"<input type=\"text\" name=\"day_num_" + entry_num + "\" id=\"day_num_" + entry_num + "\" class=\"entry_input\" size=\"1\"/>" +
+							"</td>" + 
+							"<td style=\"display:table-cell\">" +
 								"<label for=\"reading_" + entry_num + "\" id=\"label_reading_" + entry_num + "\">Reading: </label>" + 
+							"</td>" +
+							"<td style=\"display:table-cell; width:100px\">" +
+								"<span id=\"display_reading_" + entry_num + "\" class=\"entry_display\"></span>" + 
 								"<input type=\"text\" name=\"reading_" + entry_num + "\" id=\"reading_" + entry_num + "\" class=\"entry_input\"/>" + 
-								"<p id=\"display_reading_" + entry_num + "\" class=\"entry_display\"></p>" + 
 							"</td>" +
 						"</tr>"
 	$("#entries_table").append(new_entry_html)

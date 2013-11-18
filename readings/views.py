@@ -27,8 +27,72 @@ def readings_page(request):
 	
 	consistency = percent_parser.parse_percent(get_consistency(request.user), True)
 	
+	for schedule in request.user.subscribed_sched.all():
+		print(schedule.title)
+	
 	context = RequestContext(request, {"readings": readings_text, "consistency": consistency})
 	return render_to_response('readings/readings.html', context)
+	
+def add_reading(request):
+	"""
+	Add a reading to the models
+	"""
+	if(request.method == "GET"):
+		redirect('/readings')
+
+	#get the reading
+	reading_text = request.POST["reading"]
+	date_text = request.POST["date"]
+	
+	#parse the date
+	date = date_parser.parse_date(date_text)
+	if(date == None):
+		return redirect("/")	#TODO Once templates are done, make this redirect/render something prettier
+	#parse the reading
+	full_readings = reading_parser.parse_reading(reading_text)
+	if(full_readings == None):
+		return redirect("/")	#TODO Once templates are done, make this redirect/render something prettier
+	
+	for full_reading in full_readings:
+		reading = ReadingEntry()
+		reading.user = request.user
+		reading.reading = full_reading
+		reading.date = date
+		reading.save()
+	
+	return redirect('/readings/')
+	
+def delete_reading(request, reading, month, day, year):
+	"""
+	Delete the reading at date for the current user
+	"""
+	if(request.method == "GET"):
+		redirect('/readings')
+	
+	full_reading = reading_parser.parse_reading(reading)
+	if(full_reading == None):
+		return redirect("/")	#TODO Once templates are done, make this redirect/render something prettier
+	
+	date_obj = datetime.datetime(int(year), int(month), int(day))
+	
+	ReadingEntry.objects.get(date = date_obj, reading = full_reading[0], user = request.user).delete()
+	
+	return redirect('/readings/')
+	
+def get_consistency(current_user):
+	"""
+	Gets how consistent a user is
+	Returns the consistency between 0 to 1
+	"""
+	days_read_month = 0
+	today = datetime.date.today()
+	number_of_days = calendar.monthrange(today.year, today.month)[1]	#get number of days in month
+	
+	for day in calendar.Calendar(0).itermonthdates(today.year, today.month):
+		if(len(ReadingEntry.objects.filter(user = current_user, date = day)) != 0):
+			days_read_month += 1
+	
+	return days_read_month / float(number_of_days)
 	
 def readings_schedule_page(request):
 	"""
@@ -92,10 +156,9 @@ def edit_schedule_page(request, schedule):
 	
 	entry_text = []
 	for i in range(len(schedule_entries)):
-		print(str(i) + " " + str(schedule_entries[i].reading) + " " + str(schedule_entries[i].day_num))
 		entry_text.append((i, schedule_entries[i].reading, schedule_entries[i].day_num))
 	
-	context = RequestContext(request, {"title":requested_schedule.title, "entries":entry_text})
+	context = RequestContext(request, {"title":requested_schedule.title, "startdate":date_parser.parse_date_to_string(requested_schedule.start_date), "entries":entry_text})
 	return render_to_response('readings/edit_reading_schedule.html', context)
 	
 def delete_schedule(request, schedule):
@@ -104,7 +167,6 @@ def delete_schedule(request, schedule):
 	Will (probably) not delete the schedule from memory, just orphan the schedule
 	and allow someone else to take it over
 	"""
-	
 	return redirect("/readings/schedules/")
 	
 def submit_schedule(request, schedule):
@@ -112,9 +174,22 @@ def submit_schedule(request, schedule):
 	Submit modifications to a schedule
 	"""
 	
+	new_name = request.POST["name"]
+	new_date = request.POST["start_date"]
 	num_entries = int(request.POST["entries_num"])
 	
 	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
+	
+	requested_schedule.title = new_name
+	requested_schedule.web_friendly_title = new_name.replace(" ", "")
+	
+	new_date_obj = date_parser.parse_date(new_date)
+	if(new_date_obj == None):
+		new_date_obj = datetime.date.today()
+		
+	requested_schedule.start_date = new_date_obj
+	
+	requested_schedule.save()
 	
 	ReadingScheduleEntry.objects.filter(schedule = requested_schedule).delete()
 	
@@ -124,99 +199,49 @@ def submit_schedule(request, schedule):
 		
 		if(new_reading != None and len(new_reading) != 0 and unicode(new_day_num).isnumeric()):
 			for readings in new_reading:
-				print(str(reading_parser.parse_reading(readings)))
 				for reading in reading_parser.parse_reading(readings):
-					print(reading)
 					new_entry = ReadingScheduleEntry()
 					new_entry.schedule = requested_schedule
 					new_entry.day_num = new_day_num
 					new_entry.reading = reading
 					new_entry.save()
 	
-	return redirect("/readings/schedules/" + schedule)
-	
-def add_schedule_reading(request):
-	"""
-	Adds an entry to the reading schedule
-	"""
-	
-	#get the reading
-	reading_text = request.POST["reading"]
-	date_text = request.POST["date"]
-	
-	#parse the reading
-	full_readings = reading_parser.parse_reading(reading_text)
-	if(full_readings == None):
-		return redirect("/")	#TODO Once templates are done, make this redirect/render something prettier
-	
-	for full_reading in full_readings:
-		reading = ReadingScheduleEntry()
-		reading.user = request.user
-		reading.reading = full_reading
-		reading.day_num = date
-		reading.save()
-	
-	return redirect('/readings/schedules/')
-	
-def add_reading(request):
-	"""
-	Add a reading to the models
-	"""
-	if(request.method == "GET"):
-		redirect('/readings')
-
-	#get the reading
-	reading_text = request.POST["reading"]
-	date_text = request.POST["date"]
-	
-	#parse the date
-	date = date_parser.parse_date(date_text)
-	if(date == None):
-		return redirect("/")	#TODO Once templates are done, make this redirect/render something prettier
-	#parse the reading
-	full_readings = reading_parser.parse_reading(reading_text)
-	if(full_readings == None):
-		return redirect("/")	#TODO Once templates are done, make this redirect/render something prettier
-	
-	for full_reading in full_readings:
-		reading = ReadingEntry()
-		reading.user = request.user
-		reading.reading = full_reading
-		reading.date = date
-		reading.save()
-	
-	return redirect('/readings/')
-	
-def delete_reading(request, reading, month, day, year):
-	"""
-	Delete the reading at date for the current user
-	"""
-	if(request.method == "GET"):
-		redirect('/readings')
-	
-	full_reading = reading_parser.parse_reading(reading)
-	if(full_reading == None):
-		return redirect("/")	#TODO Once templates are done, make this redirect/render something prettier
-	
-	date_obj = datetime.datetime(int(year), int(month), int(day))
-	
-	ReadingEntry.objects.get(date = date_obj, reading = full_reading[0], user = request.user).delete()
-	
-	return redirect('/readings/')
-	
-def get_consistency(current_user):
-	"""
-	Gets how consistent a user is
-	Returns the consistency between 0 to 1
-	"""
-	days_read_month = 0
-	today = datetime.date.today()
-	number_of_days = calendar.monthrange(today.year, today.month)[1]	#get number of days in month
-	
-	for day in calendar.Calendar(0).itermonthdates(today.year, today.month):
-		if(len(ReadingEntry.objects.filter(user = current_user, date = day)) != 0):
-			days_read_month += 1
-	
-	return days_read_month / float(number_of_days)
+	return redirect("/readings/schedules/" + new_name.replace(" ", ""))
 		
+def schedule_consistency(request, schedule):
+	"""
+	Provides consistency and completion for the schedule
+	"""
+	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
+	if(requested_schedule == None):
+		return redirect("/readings/")	#TODO CHANGE THIS TO SOMETHING PRETTIER
+	
+	readings_entry = ReadingScheduleEntry.schedule.get(schedule = requested_schedule)
+	readings_read = ReadingEntry.objects.get(user = request.user, date__range=[requested_schedule.start_date, datetime.date.today()]
+	
+	schedule_list = []
+	for reading in readings_read:
+		print(reading.title)
+	
+	context = RequestContext(request, {"title":requested_schedule.title, "startdate":date_parser.parse_date_to_string(requested_schedule.start_date), "entries":entry_text})
+	return render_to_response('readings/edit_reading_schedule.html', context)
+	
+		
+def join_schedule(request, schedule):
+	"""
+	The logged in user will join the schedule
+	"""
+	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
+	requested_schedule.signed_up.add(request.user)
+	
+	return redirect("/readings/")
+	
+def leave_schedule(request, schedule):
+	"""
+	The logged in user will leave the schedule
+	"""
+	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
+	requested_schedule.signed_up.remove(request.user)
+	
+	return redirect("/readings/")
 	

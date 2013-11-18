@@ -8,6 +8,10 @@ def parse_date(date_str):
 	date_str = date_str.replace("-", "/")
 	
 	date_fields = date_str.split("/")
+	
+	if(len(date_fields) != 3):
+		return None
+	
 	month = date_fields[0]
 	day = date_fields[1]
 	year = date_fields[2]
