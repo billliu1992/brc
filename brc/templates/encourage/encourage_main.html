@@ -1,0 +1,14 @@
+<html>
+	<head></head>
+	<body>
+		{% for schedule_name, schedule in schedule_status.items %}
+			{{schedule_name}}<br />
+			{% for day_num, entry in schedule.items %}
+				{{day_num}}
+				{% for reading, status in entry.items %}
+					{{reading}} {{status}}<br />
+				{% endfor %}
+			{% endfor %}
+		{% endfor %}
+	</body>
+</html>

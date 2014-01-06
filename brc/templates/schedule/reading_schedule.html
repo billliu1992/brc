@@ -5,7 +5,7 @@
 	
 	<body>
 		<!-- Submit reading form -->
-		<form action="/readings/schedules/new/" method="POST">
+		<form action="/schedule/new/" method="POST">
 			{% csrf_token %}
 			<label for="schedule_name">Schedule Name:</label>
 			<input type="text" name="schedule_name" id="schedule_name" />
@@ -14,7 +14,7 @@
 		<!-- Show all schedules -->
 		{% for title, webfriendlytitle in schedules %}
 			{{title}}
-			<a href="/readings/schedules/{{webfriendlytitle}}/">Edit</a>
+			<a href="/schedule/{{webfriendlytitle}}/">Edit</a>
 			<br />
 		{% endfor %}
 		<!-- Consistency -->
