@@ -1,0 +1,55 @@
+body {
+	background-color: D9F2FF;
+	font-family: Arial;
+}
+
+.all-content {
+	width: 1024px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.popup-box {
+	background-color: #FFF;
+	display: none;
+	position: absolute;
+}
+
+.popup-box .popup-topbar {
+	
+	background-color: #628FD9;
+	display: block;
+	padding: 10px;
+	border-style: solid;
+	border-width: 0px;
+	border-bottom-width: 2px;
+	
+}
+
+.popup-topbar span {
+	color: #111;
+}
+
+.popup-box .popup-close {
+	float: right;
+}
+
+.popup-box .popup-main {
+	padding: 10px;
+	display: block;	
+}
+
+.popup-box .popup-title {
+	font-size: 20px;
+}
+
+.popup-background {
+	background-color: rgba(200, 200, 200, .8);
+	top: 0;
+	left: 0;
+	position: absolute;
+	display: block;
+}
+
+
+	

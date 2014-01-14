@@ -9,11 +9,11 @@ def index(request):
 	For the index page
 	"""
 	#go to readings page if logged in
-	if(request.user.is_authenticated()):
-		return redirect('readings/')
+	#if(request.user.is_authenticated()):
+	#	return redirect('readings/')
 	
 	context = RequestContext(request, {})
-	return render_to_response('main.html', context)
+	return render_to_response('front.html', context)
 	
 def authenticate_login(request):
 	"""

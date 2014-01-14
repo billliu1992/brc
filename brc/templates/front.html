@@ -1,0 +1,62 @@
+{% load staticfiles %}
+
+<html>
+	<head>
+		<title>BRC - Front</title>
+		
+		<link rel="stylesheet" type="text/css" href='{% static "css/base.css" %}'>
+		<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+		<script src='{% static "js/popupbox.js" %}'></script>
+		
+	</head>
+	<body>
+		<div class="all-content">
+			<div class="header">
+			</div>
+		
+			<div class="main-body">
+				<div class="front">
+					<button>Sign up!</button>
+					<a href="#" onclick="popUp('login-box')">Sign in</a>
+				<div class="front">
+			</div>
+		
+			<div class="footer">
+			</div>
+			
+			<div id="login-box" class="popup-box">
+				<div class="popup-topbar">
+					<span class="popup-title">Login</span>
+					<a href="#" class="popup-close">X</a>
+				</div>
+				<div class="popup-main">
+					<form name="loginForm" action="login" method="post">
+						{% csrf_token %}
+						<table>
+							<tr>
+								<td>
+									<label for="username">Username: </label>
+								</td>
+								<td>
+									<input type="text" name="username" id="username">
+								</td>
+							<tr>
+							<tr>
+								<td>
+									<label for="password">Password: </label>
+								</td>
+								<td>
+									<input type="text" name="password" id="password">
+								</td>
+							</tr>
+							<tr>
+								<td colspan=2>
+									<input type="submit" value="Log in">
+								</td>
+							</tr>
+					</form>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

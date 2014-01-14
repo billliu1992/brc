@@ -1,0 +1,33 @@
+<html>
+	<head>
+		{% block headextend %}
+			<title>BRC - Page<title>
+		{% endblock %}
+	</head>
+	<body>
+		<div class="all-content">
+			<div class="header">
+			</div>
+		
+			<div class="main-body">
+				<div class="leftbar">
+					<a href="#">Home</a>
+					<a href="#">Readings</a>
+					<a href="#">Schedules</a>
+					<a href="#">Challenge</a>
+				</div>
+		
+				<div class="main-content">
+					{% block content %}
+					{% content %}
+				</div>
+		
+				<div class="rightbar">
+				</div>
+			</div>
+		
+			<div class="footer">
+			</div>
+		</div>
+	</body>
+</html>
