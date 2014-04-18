@@ -1,32 +1,24 @@
 <html>
 	<head>
-		{% block headextend %}
-			<title>BRC - Page<title>
+		{% block head %}
 		{% endblock %}
 	</head>
 	<body>
-		<div class="all-content">
-			<div class="header">
+		<div id="all-content">
+			<div id="header">
+				{# temp #}BRC
 			</div>
-		
-			<div class="main-body">
-				<div class="leftbar">
-					<a href="#">Home</a>
-					<a href="#">Readings</a>
-					<a href="#">Schedules</a>
-					<a href="#">Challenge</a>
+			<div id="main-body">
+				<div id="menu-bar">
+					<a href="#" class="menu-item">Profile</a>
+					<a href="#" class="menu-item">Readings</a>
+					<a href="#" class="menu-item">Encourage</a>
+					<a href="#" class="menu-item">Schedule</a>
 				</div>
-		
-				<div class="main-content">
-					{% block content %}
-					{% content %}
-				</div>
-		
-				<div class="rightbar">
-				</div>
+				{% block main_content %}
+				{% endblock %}
 			</div>
-		
-			<div class="footer">
+			<div id="footer">
 			</div>
 		</div>
 	</body>

@@ -143,3 +143,28 @@ def leave_schedule(request, schedule):
 	requested_schedule.signed_up.remove(request.user)
 	
 	return redirect("/schedule/")
+	
+def get_todays_reading(current_user):
+	"""
+	Returns a list containing today's reading
+	"""
+	schedules = []
+	
+	subscribed_schedules = current_user.subscribed_sched.all()
+	today = datetime.date.today()
+	
+	for sched in subscribed_schedules:
+		readings = []
+		
+		day_num = (today - sched.start_date).days
+		
+		todays_entries = ReadingScheduleEntry.objects.filter(schedule = sched, day_num__lte = day_num + 1, day_num__gte = day_num)
+		
+		for entry in todays_entries:
+			readings.append(entry.reading)
+			
+		schedules.append([sched.title, readings])
+		
+		print schedules
+		
+	return schedules

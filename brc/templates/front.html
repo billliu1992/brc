@@ -5,24 +5,43 @@
 		<title>BRC - Front</title>
 		
 		<link rel="stylesheet" type="text/css" href='{% static "css/base.css" %}'>
+		<link rel="stylesheet" type="text/css" href='{% static "css/front.css" %}'>
+		<link href='http://fonts.googleapis.com/css?family=Hammersmith+One' rel='stylesheet' type='text/css'>
 		<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
 		<script src='{% static "js/popupbox.js" %}'></script>
 		
 	</head>
 	<body>
-		<div class="all-content">
-			<div class="header">
+		<div id="all-content">
+			
+			
+			<div id="front-content">
+				<div id="main-content">
+					<div id="header">
+						{#temp#}BRC
+					</div>
+					<div id="main-body">
+						<div id="content-left">
+							<div class="front-text">
+								<span class="big-text">Welcome!</span>
+								<br />
+								<span class="little-text">Insert text here</span>
+							</div>
+						</div>
+						<div id="content-right">
+							<div class="front-buttons">
+								<button id="sign-up-btn">Sign up!</button>
+								<br />
+								<a href="#" onclick="popUp('login-box')">Sign in</a>
+							</div>
+						</div>
+					</div>
+					<div id="footer">
+					</div>
+				</div>
 			</div>
 		
-			<div class="main-body">
-				<div class="front">
-					<button>Sign up!</button>
-					<a href="#" onclick="popUp('login-box')">Sign in</a>
-				<div class="front">
-			</div>
-		
-			<div class="footer">
-			</div>
+			
 			
 			<div id="login-box" class="popup-box">
 				<div class="popup-topbar">

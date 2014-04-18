@@ -6,6 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 	url(r'^$', 'brc.views.index'),
+	url(r'^profile', 'brc.views.profile_page'),
 	url(r'^login', 'brc.views.authenticate_login'),
 	
 	url(r'^readings/', include('readings.urls')),
