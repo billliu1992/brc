@@ -6,15 +6,25 @@
 	<body>
 		<div id="all-content">
 			<div id="header">
-				{# temp #}BRC
+				<div id="logo">Bible Reading Challenge</div>
 			</div>
 			<div id="main-body">
 				<div id="menu-bar">
-					<a href="#" class="menu-item">Profile</a>
-					<a href="#" class="menu-item">Readings</a>
+					<a href="/profile/" class="menu-item">Profile</a>
+					<a href="/readings/" class="menu-item">Readings</a>
 					<a href="#" class="menu-item">Encourage</a>
-					<a href="#" class="menu-item">Schedule</a>
+					<a href="/schedule/" class="menu-item">Schedule</a>
 				</div>
+				<hr />
+				{# error notifications #}
+				{% if messages %}
+					{% for message in messages %}
+						<div class="content-box notif-{{message.tags}}">
+							{{message}}
+						</div>
+					{% endfor %}
+				{% endif %}
+				
 				{% block main_content %}
 				{% endblock %}
 			</div>

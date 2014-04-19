@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+	<title>BRC - Schedules</title>
+
+	<link rel="stylesheet" type="text/css" href='{% static "css/base.css" %}'>
+	<link rel="stylesheet" type="text/css" href='{% static "css/readings.css" %}'>
+	<link href='http://fonts.googleapis.com/css?family=Hammersmith+One' rel='stylesheet' type='text/css'>
+	<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+	<script src='{% static "js/popupbox.js" %}'></script>
+{% endblock %}
+
+{% block main_content %}
+	<div class="wrapper-left">
+	<div class="content-box" id="ongoing-schedules-box">
+		<div class="content-box-header">Your Ongoing Schedules</div>
+	</div>
+	</div>
+	
+	<div class="wrapper-right">
+		<div class="content-box" id="todays-readings-box">
+			<div class="content-box-header">Today's Readings</div>
+		</div>
+	</div>
+	
+	<div class="content-box" id="created-schedules-box">
+		<div class="content-box-header">Your Created Schedules</div>
+		{% for title, webfriendlytitle in schedules %}
+			<div class="schedule-entry">
+				<div class="schedule-entry-name">{{title}}</div>
+				<div class="schedule-entry-delete"><a href="/schedule/{{webfriendlytitle}}/">Edit</a></div>
+			</div>
+		{% endfor %}
+	</div>
+	
+	<div class="content-box" id="popular-schedules-box">
+		<div class="content-box-header">Popular Schedules</div>
+	</div>
+{% endblock %}

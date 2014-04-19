@@ -12,15 +12,6 @@
 {% endblock %}
 		
 {% block main_content %}
-
-		{% if messages %}
-			{% for message in messages %}
-				<div class="content-box notif-{{message.tags}}">
-					{{message}}
-				</div>
-			{% endfor %}
-		{% endif %}
-	
 		<div class="content-box" id="enter-reading-box">
 			<div class="content-box-header">Enter a reading</div>
 			<form action="/readings/submit_reading" method="POST">

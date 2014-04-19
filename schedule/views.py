@@ -2,6 +2,7 @@ import datetime
 
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
+from django.contrib import messages
 
 from schedule.models import ReadingSchedule, ReadingScheduleEntry
 
@@ -22,8 +23,8 @@ def all_schedules_page(request):
 	for schedule in schedules:
 		schedules_text.append((schedule.title, schedule.web_friendly_title))
 	
-	context = RequestContext(request, {"schedules": schedules_text})
-	return render_to_response('schedule/reading_schedule.html', context)
+	context = RequestContext(request, {"schedules": schedules_text, "messages": messages})
+	return render_to_response('schedule/schedule_main.html', context)
 	
 def new_schedule(request):
 	"""

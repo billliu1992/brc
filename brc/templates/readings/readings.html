@@ -1,11 +1,20 @@
-<html>
-	<head>
-		<title>Readings</title>
-	</head>
-	
-	<body>
-		<!-- Submit reading form -->
-		<form action="submit_reading" method="POST">
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+<title>BRC - Readings</title>
+
+<link rel="stylesheet" type="text/css" href='{% static "css/base.css" %}'>
+<link rel="stylesheet" type="text/css" href='{% static "css/readings.css" %}'>
+<link href='http://fonts.googleapis.com/css?family=Hammersmith+One' rel='stylesheet' type='text/css'>
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<script src='{% static "js/popupbox.js" %}'></script>
+{% endblock %}
+		
+{% block main_content %}
+	<div class="content-box" id="enter-reading-box">
+		<div class="content-box-header">Enter a reading</div>
+		<form action="/readings/submit_reading" method="POST">
 			{% csrf_token %}
 			<label for="reading">Chapter:</label>
 			<input type="text" name="reading" id="reading" />
@@ -14,13 +23,51 @@
 			<label for="date">(MM/DD/YYYY)</label>
 			<input type="submit" value="Submit" />
 		</form>
-		<!-- Show all readings -->
+	</div>
+	
+	<div class="wrapper-left">
+		<div id="help-text-area">
+			<div class="area-header">Post Your Readings:</div>
+			<hr class="in-content-hr"/>
+			<div class="area-text">
+				<ul class="help-list">
+					<li>
+						Each time you read a chapter, post it on this page!
+					</li>
+					<li>
+						We'll keep track of fun statistics like how many days out of the past 7 days you've read. 
+					</li>
+					<li>
+						Are you subscribed to a schedule and/or participating in a challenge? We'll automatically update those each times you post a reading here!
+					</li>
+				</ul>
+			</div>
+		</div>
+	
+		<div class="content-box" id="consistency-box">
+			<div class="content-box-header">Stats</div>
+			<div>
+				Consistency in past 7 days: {{consistency_week}}
+			</div>
+			<div>
+				Consistency in past 30 days: {{consistency_month}}
+			</div>
+			<div>
+				Chapters read in past 30 days: {{num_month}}
+			</div>
+		</div>
+	</div>
+	
+	<div class="content-box wrapper-right" id="previous-readings-box">
+		<div class="content-box-header">Previous Readings:</div>			
 		{% for reading, webfriendlyreading, month, day, year in readings %}
-			{{reading}} - {{month}}/{{day}}/{{year}}
-			<a href="/readings/delete_reading/{{webfriendlyreading}}/{{month}}/{{day}}/{{year}}">Delete</a>
-			<br />
+			<div class="reading-entry">
+				<span class="reading-entry-verse">{{reading}}</span>
+				<a class="delete-reading-entry" href="/readings/delete_reading/{{webfriendlyreading}}/{{month}}/{{day}}/{{year}}">Delete?</a>
+				<span class="reading-entry-date">{{month}}/{{day}}/{{year}}</span>
+			</div>
 		{% endfor %}
-		<!-- Consistency -->
-		{{consistency}}
-	</body>
-</html>
+	</div>
+
+
+{% endblock %}

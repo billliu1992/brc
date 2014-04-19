@@ -1,0 +1,39 @@
+#help-text-area {
+	padding: .3em;
+}
+
+.area-header {
+	font-size: 120%;
+	font-family: Hammersmith One;
+}
+
+.help-list {
+	font-size: 92%;
+	padding-left: 1.2em;
+	margin: .3em;
+}
+
+.in-content-hr {
+	margin: .2em .2em;
+}
+
+.reading-entry {
+	padding: .1em 0;
+}
+
+.reading-entry-date {
+	font-style: italic;
+	float: right;
+}
+
+.reading-entry:hover .delete-reading-entry {
+	display: inline-block;
+}
+
+.delete-reading-entry {
+	text-decoration: none;
+	display: none;
+	float: right;
+	margin-left: .6em;
+	color: #FF4040;
+}

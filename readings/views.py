@@ -9,7 +9,6 @@ from readings.models import ReadingEntry
 
 from parser import date_parser, reading_parser, percent_parser
 
-
 def readings_page(request):
 	"""
 	Used for debug, not used anymore
@@ -21,15 +20,19 @@ def readings_page(request):
 		return redirect('/')
 		
 	#get the readings to put on the view
-	readings = ReadingEntry.objects.filter(user=request.user)
+	today = datetime.date.today()
+	readings = ReadingEntry.objects.filter(user=request.user, date__lte=today, date__gte=(today - datetime.timedelta(30))).order_by("-date")
+	num_month = len(readings)
+	readings = readings[:15]	#only get 15 TODO Research how to do this in the query step so you don't grab all of them
 	
 	readings_text = []
 	for reading in readings:
 		readings_text.append((reading.reading, reading.reading.replace(" ", ""), reading.date.month, reading.date.day, reading.date.year))
 	
-	consistency = percent_parser.parse_percent(get_consistency(request.user), True)
+	consistency_month = percent_parser.parse_percent(get_consistency_month(request.user), True)
+	consistency_week = percent_parser.parse_percent(get_consistency_week(request.user), True)
 	
-	context = RequestContext(request, {"readings": readings_text, "consistency": consistency})
+	context = RequestContext(request, {"readings": readings_text, "consistency_month": consistency_month, "consistency_week": consistency_week, "num_month":num_month,  "messages": messages})
 	return render_to_response('readings/readings.html', context)
 	
 def add_reading(request):
@@ -47,12 +50,12 @@ def add_reading(request):
 	date = date_parser.parse_date(date_text)
 	if(date == None):
 		messages.error(request, "Incorrect date format!")
-		return redirect("/profile/")	#TODO Once templates are done, make this redirect/render something prettier
+		return redirect("/profile/")
 	#parse the reading
 	full_readings = reading_parser.parse_reading(reading_text)
 	if(full_readings == None):
 		messages.error(request, "Incorrect verse format!")
-		return redirect("/profile/")	#TODO Once templates are done, make this redirect/render something prettier
+		return redirect("/profile/")
 	
 	for full_reading in full_readings:
 		reading = ReadingEntry()
@@ -62,7 +65,7 @@ def add_reading(request):
 		reading.save()
 	
 	messages.success(request, "Successfully entered a reading!")
-	return redirect('/profile/')
+	return redirect('/readings/')
 	
 def delete_reading(request, reading, month, day, year):
 	"""
