@@ -94,7 +94,7 @@ def get_consistency_month(current_user):
 	number_of_days = calendar.monthrange(today.year, today.month)[1]	#get number of days in month
 	
 	for dayNum in range(0, 30):
-		if(len(ReadingEntry.objects.filter(user = current_user, date = today - datetime.timedelta(dayNum))) != 0):
+		if(len(ReadingEntry.objects.filter(user = current_user, date = (today - datetime.timedelta(dayNum)))) != 0):
 			days_read_month += 1
 	
 	return days_read_month / float(number_of_days)

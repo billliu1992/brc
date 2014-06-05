@@ -42,6 +42,9 @@ def profile_page(request):
 	Profile
 	Shows a summary of the profile, first page that you hit after logging in
 	"""
+	if(not request.user.is_authenticated()):
+		return redirect("/")
+	
 	#pass basic information
 	user_name = request.user.username
 	consistency_month = get_consistency_month(request.user)

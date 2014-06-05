@@ -1,3 +1,4 @@
+/* overrides */
 body {
 	background-color: #D9F2FF;
 	font-size: 130%;
@@ -10,6 +11,23 @@ hr {
 	height: 3px;
 	background-color: #555;
 }
+
+
+a {
+	text-decoration: none;
+}
+
+button, input[type="button"], input[type="submit"], .button {
+	background-color: #93CCCB;
+	border-color: #2D5958;
+	
+	color: #2D5958;
+	border-style: solid;
+	padding: .3em .5em;
+	border-radius: 5px;
+}
+
+/* main content */
 
 #all-content {
 	width: 60%;
@@ -40,7 +58,6 @@ hr {
 	width: 100%;
 	bottom: 0;
 	height: 100px;
-	background-color: #CF62CD;
 }
 
 /* Side bar */
@@ -113,6 +130,27 @@ hr {
 	display: inline-block;
 }
 
+.list-item-hover {
+	padding: .1em .2em;
+}
+
+.list-item-hover:hover {
+	background-color: #DDD;
+}
+
+/* Button */
+.small-btn {
+	font-size: 80%;
+}
+
+.large-btn {
+	font-size: 100%;
+}
+
+.huge-btn {
+	font-size: 110%;
+}
+
 /* Pop up */
 
 .popup-box {
@@ -155,14 +193,6 @@ hr {
 	left: 0;
 	position: absolute;
 	display: block;
-}
-
-button {
-	background-color: #93CCCB;
-	border-color: #2D5958;
-	border-style: solid;
-	padding: 10px;
-	border-radius: 5px;
 }
 
 /* Notifications */

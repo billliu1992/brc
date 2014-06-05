@@ -5,25 +5,35 @@ from django.template import RequestContext
 from django.contrib import messages
 
 from schedule.models import ReadingSchedule, ReadingScheduleEntry
+from readings.models import *
 
 from parser import date_parser, reading_parser
 
 def all_schedules_page(request):
-	"""
-	Page for updating reading schedules
+	"""	
+	Main page for schedules
 	"""
 	#check to make sure user is logged in
 	if(not request.user.is_authenticated()):
 		return redirect('/')
 		
-	#get the schedules to put on the  view
-	schedules = ReadingSchedule.objects.filter(creator = request.user)
+	#get the created schedules to put on the view
+	created_schedules = ReadingSchedule.objects.filter(creator = request.user)
 	
-	schedules_text = []
-	for schedule in schedules:
-		schedules_text.append((schedule.title, schedule.web_friendly_title))
+	created_schedules_text = []
+	for schedule in created_schedules:
+		created_schedules_text.append((schedule.title, schedule.web_friendly_title))
 	
-	context = RequestContext(request, {"schedules": schedules_text, "messages": messages})
+	#get the subscribed schedules	
+	subscribed_schedules = request.user.subscribed_sched.all()
+	
+	print(subscribed_schedules)
+	
+	subscribed_schedules_text = []
+	for schedule in subscribed_schedules:
+		subscribed_schedules_text.append((schedule.title, schedule.web_friendly_title))
+	
+	context = RequestContext(request, {"created_schedules": created_schedules_text, "subscribed_schedules": subscribed_schedules_text, "messages": messages})
 	return render_to_response('schedule/schedule_main.html', context)
 	
 def new_schedule(request):
@@ -55,19 +65,70 @@ def new_schedule(request):
 	
 def view_schedule_page(request, schedule):
 	"""
+	Page for viewing the schedule
+	
+	The code for the view splits the schedule into 4 (uneven) columns
+	"""
+	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
+	readings = ReadingEntry.objects.filter(date__gte = requested_schedule.start_date, user = request.user)
+	
+	subscribed = requested_schedule in request.user.subscribed_sched.all()
+	
+	num_cols = 4
+	
+	#get the readings to put on the view
+	schedule_entries = ReadingScheduleEntry.objects.filter(schedule = requested_schedule)
+	
+	column_length = len(schedule_entries) / num_cols + 1
+	entry_text = []
+	for i in range(num_cols):
+		entry_text.append([])
+	
+	
+	startdate = requested_schedule.start_date
+	for i in range(len(schedule_entries)):
+		deadline_date = startdate + datetime.timedelta(days = schedule_entries[i].day_num)
+
+		column_num = i / column_length
+		
+		if(subscribed):
+			#get whether or not the reading is finished
+			reading_status = "unread"
+			for reading in readings:
+				if(reading.reading == schedule_entries[i].reading):
+					#decide whether or not a reading was finished, late, or on time
+					reading_deadline = requested_schedule.start_date + datetime.timedelta(schedule_entries[i].day_num)
+			
+					if(reading.date <= reading_deadline):
+						reading_status = "completed"
+					elif(reading.date > reading_deadline and reading_status == 0):	#do not want to change an entry that was on time to late if the reading reads a reading twice
+						reading_status = "late"
+		else:
+			reading_status = "grayed"
+		
+		entry_text[column_num].append((schedule_entries[i].reading, date_parser.parse_date_to_string(deadline_date), reading_status))
+	
+	context = RequestContext(request, {"title":requested_schedule.title, "all_entries": entry_text})
+
+	return render_to_response('schedule/view_schedule.html', context)
+	
+	
+def edit_schedule_page(request, schedule):
+	"""
 	Page for editing the schedule
 	"""
-	
 	#check to make sure user is logged in
 	if(not request.user.is_authenticated()):
-		return redirect('/')	#TODO change this...
+		messages.error(request, "Log in to edit this schedule!")
+		return redirect('/')
 		
 	#get the schedule
 	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
 	
 	#makes sure that it is the creator
 	if(request.user != requested_schedule.creator):
-		return redirect('/')	#TODO Change this...
+		messages.error(request, "You do not have permission to edit this schedule!")
+		return redirect('/schedules/')
 	
 	#get the readings to put on the view
 	schedule_entries = ReadingScheduleEntry.objects.filter(schedule = requested_schedule)
@@ -92,11 +153,21 @@ def submit_schedule(request, schedule):
 	Submit modifications to a schedule
 	"""
 	
+	#check to make sure user is logged in
+	if(not request.user.is_authenticated()):
+		messages.error(request, "Log in to edit this schedule!")
+		return redirect('/')
+	
 	new_name = request.POST["name"]
 	new_date = request.POST["start_date"]
 	num_entries = int(request.POST["entries_num"])
 	
 	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
+	
+	#makes sure that it is the creator
+	if(request.user != requested_schedule.creator):
+		messages.error(request, "You do not have permission to edit this schedule!")
+		return redirect('/schedules/')
 	
 	requested_schedule.title = new_name
 	requested_schedule.web_friendly_title = new_name.replace(" ", "")

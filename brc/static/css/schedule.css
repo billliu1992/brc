@@ -1,0 +1,46 @@
+.schedule-name {
+	display: inline;
+}
+
+.schedule-edit-link {
+	display: inline;
+	float: right;
+}
+
+.schedule-back-link {
+	font-size: 80%;
+	overflow: auto;
+	margin-bottom: 2em;
+}
+
+.schedule-entry-column {
+	font-size: 80%;
+	display: inline-block;
+	width: 24%;
+	overflow: hidden;
+	vertical-align: top;
+}
+
+.schedule-entry {
+	padding: 0 .2em;
+}
+
+.button-row {
+	margin-top: 2em;
+}
+
+.unread {
+	color: red;
+}
+
+.completed {
+	color: green;
+}
+
+.late {
+	color: yellow;
+}
+
+.grayed {
+	color: #BBB;
+}

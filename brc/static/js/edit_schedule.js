@@ -63,7 +63,6 @@ function registerClicks(total_entries_num)
 
 function registerClick(entry_num)
 {
-	console.log("REGISTERING: " + entry_num)
 	$("#row_"+entry_num).click(function() {clickOnEntry(entry_num)});
 }
 
@@ -99,6 +98,8 @@ function addEntry()
 	$("#row_"+entry_num).hide()
 	$("#row_"+entry_num).fadeIn()
 	
-	
 	hideAllInputShowDisplay()
+	
+	showInputHideDisplay(entry_num)
+	$("#day_num_"+entry_num).focus();
 }

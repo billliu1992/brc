@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load custom_tags %}
+
+{% block head %}
+	<title>BRC - View Schedule - {{title}}</title>
+
+	<link rel="stylesheet" type="text/css" href='{% static "css/schedule.css" %}'>
+
+	<script src='{% static "js/popupbox.js" %}'></script>
+{% endblock %}
+
+{% block main_content %}
+
+	<div class="content-box" id="view-schedule-box">
+		{% comment %}
+		<span class="schedule-back-link"><a href="/schedule/">&laquo; Back</a></span>
+		{% endcomment %}
+		<div class="content-box-header">{{title}}</div>
+			{% for entries in all_entries %}
+				<div class="schedule-entry-column">
+					{% for title, date, status in entries%}
+						<div class="schedule-entry">
+							<span class="schedule-entry-reading">{{title}}</span>
+							<span class="schedule-entry-date {{status}}">{{date}}</span>
+						</div>
+					{% endfor %}
+				</div>
+			{% endfor %}
+			
+			<div class="button-row">
+				<a href="/schedule/" class="button small-btn">&laquo; Back</a>
+			</div>
+	</div>
+
+{% endblock %}

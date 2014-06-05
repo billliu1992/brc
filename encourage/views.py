@@ -60,3 +60,4 @@ def get_reading_schedule_consistency(request):
 		
 	context = RequestContext(request, {"schedule_status" : schedule_status, "schedule_consistency" : schedule_consistency, "schedule_completion" : schedule_completion})
 	return render_to_response("encourage/encourage_main.html", context)
+	
