@@ -21,13 +21,28 @@
 	vertical-align: top;
 }
 
+.entry-column-wrapper {
+	margin-top: 1em;
+}
+
+.schedule-entry-date {
+	float: right;
+}
+
+.schedule-input-field {
+	margin: 1em 0;
+}
+
 .schedule-entry {
 	padding: 0 .2em;
 }
 
 .button-row {
 	margin-top: 2em;
+	margin-bottom: .3em;
 }
+
+/* Schedule entry status */
 
 .unread {
 	color: red;
@@ -43,4 +58,41 @@
 
 .grayed {
 	color: #BBB;
+}
+
+#cancel {
+	font-size: 70%;
+}
+
+.todays-reading-entry {
+	margin-left: 2em;
+}
+
+/* wrapper stuff */
+
+.large-left-wrapper {
+	width: 74%;
+	display:inline-block;
+}
+
+.small-right-wrapper {
+	width: 24%;
+	float: right;
+	display: inline-block;
+}
+
+.special-left-wrapper {
+	float: left;
+}
+
+/* Edit schedule page */
+table {
+	border: 0 solid #000;
+}
+
+.edit-entry {
+}
+
+.edit-entry:hover {
+	background-color: #DDD;
 }

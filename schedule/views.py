@@ -22,18 +22,19 @@ def all_schedules_page(request):
 	
 	created_schedules_text = []
 	for schedule in created_schedules:
-		created_schedules_text.append((schedule.title, schedule.web_friendly_title))
+		created_schedules_text.append((schedule.title, schedule.pk))
 	
 	#get the subscribed schedules	
 	subscribed_schedules = request.user.subscribed_sched.all()
 	
-	print(subscribed_schedules)
-	
 	subscribed_schedules_text = []
 	for schedule in subscribed_schedules:
-		subscribed_schedules_text.append((schedule.title, schedule.web_friendly_title))
+		subscribed_schedules_text.append((schedule.title, schedule.pk))
 	
-	context = RequestContext(request, {"created_schedules": created_schedules_text, "subscribed_schedules": subscribed_schedules_text, "messages": messages})
+	#get today's readings
+	todays_readings = get_todays_reading(request.user)
+	
+	context = RequestContext(request, {"created_schedules": created_schedules_text, "subscribed_schedules": subscribed_schedules_text, "todays_readings": todays_readings, "messages": messages})
 	return render_to_response('schedule/schedule_main.html', context)
 	
 def new_schedule(request):
@@ -56,23 +57,23 @@ def new_schedule(request):
 	
 	new_schedule = ReadingSchedule()
 	new_schedule.title = new_schedule_name
-	new_schedule.web_friendly_title = new_schedule_name.replace(" ", "")
 	new_schedule.creator = request.user
 	new_schedule.start_date = datetime.date.today()
 	new_schedule.save()
 	
 	return redirect("/schedule/")
 	
-def view_schedule_page(request, schedule):
+def view_schedule_page(request, schedule_pk):
 	"""
 	Page for viewing the schedule
 	
 	The code for the view splits the schedule into 4 (uneven) columns
 	"""
-	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
+	requested_schedule = ReadingSchedule.objects.get(pk = schedule_pk)
 	readings = ReadingEntry.objects.filter(date__gte = requested_schedule.start_date, user = request.user)
 	
 	subscribed = requested_schedule in request.user.subscribed_sched.all()
+	is_owner = requested_schedule in request.user.created_sched.all()
 	
 	num_cols = 4
 	
@@ -108,12 +109,12 @@ def view_schedule_page(request, schedule):
 		
 		entry_text[column_num].append((schedule_entries[i].reading, date_parser.parse_date_to_string(deadline_date), reading_status))
 	
-	context = RequestContext(request, {"title":requested_schedule.title, "all_entries": entry_text})
+	context = RequestContext(request, {"title":requested_schedule.title, "all_entries": entry_text, "is_owner": is_owner})
 
 	return render_to_response('schedule/view_schedule.html', context)
 	
 	
-def edit_schedule_page(request, schedule):
+def edit_schedule_page(request, schedule_pk):
 	"""
 	Page for editing the schedule
 	"""
@@ -123,7 +124,7 @@ def edit_schedule_page(request, schedule):
 		return redirect('/')
 		
 	#get the schedule
-	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
+	requested_schedule = ReadingSchedule.objects.get(pk = schedule_pk)
 	
 	#makes sure that it is the creator
 	if(request.user != requested_schedule.creator):
@@ -140,7 +141,7 @@ def edit_schedule_page(request, schedule):
 	context = RequestContext(request, {"title":requested_schedule.title, "startdate":date_parser.parse_date_to_string(requested_schedule.start_date), "entries":entry_text})
 	return render_to_response('schedule/edit_reading_schedule.html', context)
 	
-def delete_schedule(request, schedule):
+def delete_schedule(request, schedule_pk):
 	"""
 	Delete the schedule
 	Will (probably) not delete the schedule from memory, just orphan the schedule
@@ -148,7 +149,7 @@ def delete_schedule(request, schedule):
 	"""
 	return redirect("/schedules/")
 	
-def submit_schedule(request, schedule):
+def submit_schedule(request, schedule_pk):
 	"""
 	Submit modifications to a schedule
 	"""
@@ -162,7 +163,7 @@ def submit_schedule(request, schedule):
 	new_date = request.POST["start_date"]
 	num_entries = int(request.POST["entries_num"])
 	
-	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
+	requested_schedule = ReadingSchedule.objects.get(pk = schedule_pk)
 	
 	#makes sure that it is the creator
 	if(request.user != requested_schedule.creator):
@@ -170,7 +171,6 @@ def submit_schedule(request, schedule):
 		return redirect('/schedules/')
 	
 	requested_schedule.title = new_name
-	requested_schedule.web_friendly_title = new_name.replace(" ", "")
 	
 	new_date_obj = date_parser.parse_date(new_date)
 	if(new_date_obj == None):
@@ -195,23 +195,24 @@ def submit_schedule(request, schedule):
 					new_entry.reading = reading
 					new_entry.save()
 	
-	return redirect("/schedule/" + new_name.replace(" ", ""))
+	messages.success(request, "Schedule successfully submited")
+	return redirect("/schedule/" + schedule_pk)
 	
 		
-def join_schedule(request, schedule):
+def join_schedule(request, schedule_pk):
 	"""
 	The logged in user will join the schedule
 	"""
-	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
+	requested_schedule = ReadingSchedule.objects.get(pk = schedule_pk)
 	requested_schedule.signed_up.add(request.user)
 	
 	return redirect("/schedule/")
 	
-def leave_schedule(request, schedule):
+def leave_schedule(request, schedule_pk):
 	"""
 	The logged in user will leave the schedule
 	"""
-	requested_schedule = ReadingSchedule.objects.get(web_friendly_title = schedule)
+	requested_schedule = ReadingSchedule.objects.get(pk = schedule_pk)
 	requested_schedule.signed_up.remove(request.user)
 	
 	return redirect("/schedule/")
@@ -236,7 +237,5 @@ def get_todays_reading(current_user):
 			readings.append(entry.reading)
 			
 		schedules.append([sched.title, readings])
-		
-		print schedules
 		
 	return schedules

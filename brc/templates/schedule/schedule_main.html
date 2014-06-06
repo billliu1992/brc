@@ -19,11 +19,11 @@
 {% endblock %}
 
 {% block main_content %}
-	<div class="wrapper-left">
+	<div class="wrapper-left special-left-wrapper">
 		<div class="content-box" id="ongoing-schedules-box">
 			<div class="content-box-header">Your Ongoing Schedules</div>
-			{% for title, webfriendlytitle in subscribed_schedules %}
-				<div class="schedule list-item-hover" webtitle="{{webfriendlytitle}}">
+			{% for title, schedule_pk in subscribed_schedules %}
+				<div class="schedule list-item-hover" webtitle="{{schedule_pk}}">
 					<div class="schedule-name">{{title}}</div>
 				</div>
 			{% endfor %}
@@ -33,16 +33,22 @@
 	<div class="wrapper-right">
 		<div class="content-box" id="todays-readings-box">
 			<div class="content-box-header">Today's Readings</div>
+			{% for schedule in todays_readings %}
+				<div class="content-box-title">{{ schedule.0 }}:</div>
+				{% for readings in schedule.1 %}
+					<div class="todays-reading-entry">{{readings}}</div>
+				{% endfor %}
+			{% endfor %}
 		</div>
 	</div>
 	
-	<div class="wrapper-left">
+	<div class="wrapper-left special-left-wrapper">
 		<div class="content-box" id="created-schedules-box">
 			<div class="content-box-header">Your Created Schedules</div>
-			{% for title, webfriendlytitle in created_schedules %}
-				<div class="schedule list-item-hover" webtitle="{{webfriendlytitle}}">
+			{% for title, schedule_pk in created_schedules %}
+				<div class="schedule list-item-hover" webtitle="{{schedule_pk}}">
 					<div class="schedule-name">{{title}}</div>
-					<div class="schedule-edit-link"><a href="/schedule/{{webfriendlytitle}}/edit">Edit</a></div>
+					<div class="schedule-edit-link"><a href="/schedule/{{schedule_pk}}/edit">Edit</a></div>
 				</div>
 			{% endfor %}
 		</div>

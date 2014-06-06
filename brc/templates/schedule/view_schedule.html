@@ -17,6 +17,8 @@
 		<span class="schedule-back-link"><a href="/schedule/">&laquo; Back</a></span>
 		{% endcomment %}
 		<div class="content-box-header">{{title}}</div>
+		
+		<div class="entry-column-wrapper">
 			{% for entries in all_entries %}
 				<div class="schedule-entry-column">
 					{% for title, date, status in entries%}
@@ -30,7 +32,9 @@
 			
 			<div class="button-row">
 				<a href="/schedule/" class="button small-btn">&laquo; Back</a>
+				<a href="edit/" class="button small-btn">Edit</a>
 			</div>
+		</div>
 	</div>
 
 {% endblock %}

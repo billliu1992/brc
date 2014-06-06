@@ -44,9 +44,9 @@
 		<div class="content-box"  id="reading-box">
 			<div class="content-box-header">Today's Reading</div>						
 			{% for schedule in todays_reading %}
-				<span>Schedule:</span> {{ schedule.0 }}<br />
+				<div class="content-box-title">{{ schedule.0 }}:</div>
 				{% for readings in schedule.1 %}
-					Reading: {{readings}}
+					<div class="todays-reading-entry">{{readings}}</div>
 				{% endfor %}
 			{% endfor %}
 		</div>

@@ -3,10 +3,18 @@
 {% load custom_tags %}
 
 {% block head %}
-		<title>Readings</title>
+		<title>BRC - Edit Schedule - {{title}}</title>
 		<script src="{% static "js/edit_schedule.js" %}"></script>
-		<script src="http://code.jquery.com/jquery-2.0.3.js"></script>
+		<link rel="stylesheet" type="text/css" href='{% static "css/schedule.css" %}'>
 		<script>
+		
+			var exitPrompt = true;
+		
+			window.onbeforeunload = function() {
+				if(exitPrompt)
+					return "Are you sure you want to leave this page? Any unsubmitted work will not be saved";
+			}
+		
 			$(function() {
 				//register adding a new column
 				$("#add_reading").click(function() {
@@ -15,6 +23,8 @@
 				});
 				
 				$("#submit_button").click(function() {
+					exitPrompt = false;
+					
 					hideAllInputShowDisplay();
 					return true;
 				});
@@ -28,43 +38,82 @@
 {% endblock %}
 	
 {% block main_content %}
-	<div class="content-box" id="edit-schedule-box">
-		<!-- Modify schedule name and date -->
-		<form action="submit_schedule/" method="POST">
-			{% csrf_token %}
-			<label for="name">Name:</label>
-			<input type="text" id="name" name="name" value="{{title}}" />
-			<br />
-			<label for="start_date">Start Date:</label>
-			<input type="text"  id="start_date" name="start_date" value="{{startdate}}" />
-			<label for="start_date">mm/dd/yyyy</label>
+	<div class="large-left-wrapper">
+		<div class="content-box" id="edit-schedule-box">
+			<div class="content-box-header">Editing Schedule: {{title}}</div>
+				<form action="submit_schedule/" method="POST">
+					{% csrf_token %}
+					<div class="schedule-input-field">
+						<label for="name">Name:</label>
+						<input type="text" id="name" name="name" value="{{title}}" />
+					</div>
+			
+					<div class="schedule-input-field">
+						<label for="start_date">Start Date:</label>
+						<input type="text"  id="start_date" name="start_date" value="{{startdate}}" />
+						<label for="start_date">mm/dd/yyyy</label>
+					</div>
+			
+					<div class="schedule-input-field">
+						<table id="entries_table" style="table-layout: fixed">
+						{% for entry in entries %}
+							<tr class="edit-entry" id="row_{{entry.0}}">
+								<td style="display:table-cell">
+									<label for="day_num_{{entry.0}}">Day Number:</label>
+								</td>
+								<td style="display:table-cell; width:35px">
+									<span  id="display_day_num_{{entry.0}}" class="entry_display">{{entry.2}}</span>
+									<input type="text" name="day_num_{{entry.0}}" id="day_num_{{entry.0}}" class="entry_input" size="1" value="{{entry.2}}"/>
+								</td>
+								<td style="display:table-cell">
+									<label for="reading_{{entry.0}}">Reading:</label>
+								</td>
+								<td style="display:table-cell; width:100px">
+									<span id="display_reading_{{entry.0}}" class="entry_display">{{entry.1}}</span>
+									<input type="text" name="reading_{{entry.0}}" id="reading_{{entry.0}}" class="entry_input" size="15" value="{{entry.1}}"/>
+								</td>
+								{% comment %}
+								<td style="display: table-cell">
+									<span class="delete-entry">Delete?</span>
+								</td>
+								{% endcomment %}
+							</tr>
+						{% endfor %}
+						</table>
+						<button id="add_reading">Add Reading</button>
+					</div>
+			
+					<input type="hidden" name="entries_num" id="entries_num" value="{{entries|length}}">
+			
+					<div class="button-row">
+						<input type="submit" id="submit_button" value="Submit Schedule" />
+						<a href="/schedule/" id="cancel">Cancel</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	
+	<div class="small-right-wrapper">
+		<div class="content-box" id="edit-schedule-box">
+			<div class="content-box-header">Tips</div>
+			<strong>Name:</strong>
+			Enter a good descriptive name for your schedule!
+			
 			<br />
 			
-			<table id="entries_table" style="table-layout: fixed">
-			{% for entry in entries %}
-				<tr id="row_{{entry.0}}">
-					<td style="display:table-cell">
-						<label for="day_num_{{entry.0}}">Day Number:</label>
-					</td>
-					<td style="display:table-cell; width:35px">
-						<span  id="display_day_num_{{entry.0}}" class="entry_display">{{entry.2}}</span>
-						<input type="text" name="day_num_{{entry.0}}" id="day_num_{{entry.0}}" class="entry_input" size="1" value="{{entry.2}}"/>
-					</td>
-					<td style="display:table-cell">
-						<label for="reading_{{entry.0}}">Reading:</label>
-					</td>
-					<td style="display:table-cell; width:100px">
-						<span id="display_reading_{{entry.0}}" class="entry_display">{{entry.1}}</span>
-						<input type="text" name="reading_{{entry.0}}" id="reading_{{entry.0}}" class="entry_input" size="15" value="{{entry.1}}"/>
-					</td>
-				</tr>
-				
-			{% endfor %}
-
-			</table>
-			<input type="hidden" name="entries_num" id="entries_num" value="{{entries|length}}">
-			<button id="add_reading">Add Reading</button><br /><br />
-			<input type="submit" id="submit_button" value="Submit Schedule" />
-		</form>
+			<strong>Start Date:</strong>
+			The date that the schedule starts. Day number 1 will start on this date!
+			
+			<br />
+			
+			<strong>Day Number:</strong>
+			The number of days after the start date the reading is due. You can have multiple entries with the same day number!
+			
+			<br />
+			
+			<strong>Reading:</strong>
+			The bible reading due on the day number. You can denote multiple verses with a dash like <em>Matthew 1-2</em>. You can also abbreviate the book name like <em>Matt 1</em>.
+		</div>
 	</div>
+	
 {% endblock %}
