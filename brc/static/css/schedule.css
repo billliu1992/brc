@@ -1,3 +1,7 @@
+.schedule {
+	cursor: pointer;
+}
+
 .schedule-name {
 	display: inline;
 }
@@ -91,6 +95,7 @@ table {
 }
 
 .edit-entry {
+	cursor: pointer;
 }
 
 .edit-entry:hover {

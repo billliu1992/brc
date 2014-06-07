@@ -63,6 +63,50 @@ def new_schedule(request):
 	
 	return redirect("/schedule/")
 	
+def view_schedules_list(request, keywords, page_num, num_per_page):
+	"""
+	Page that displays all the joinable schedules
+	"""
+	
+	if page_num == None:
+		page_num = 1
+	else:
+		try:
+			page_num = int(page_num)
+		except ValueError:
+			page_num = 1
+		
+	if num_per_page == None:
+		num_per_page = 20
+	else:
+		try:
+			num_per_page = int(num_per_page)
+		except ValueError:
+			num_per_page = 20
+	
+	all_scheds = ReadingSchedule.objects.all()
+	
+	schedule_list = None
+	
+	if(keywords != None):
+		schedule_list = []
+		
+		for sched in all_scheds:
+			if keywords.lower() in sched.title.lower():
+				schedule_list.append(sched)
+	else:
+		schedule_list = all_scheds
+		
+	if(len(schedule_list) < page_num * num_per_page):
+		schedule_list = schedule_list[:num_per_page]
+	else:
+		schedule_list = schedule_list[(page_num-1) * num_per_page : (page_num) * num_per_page]
+		
+	context = RequestContext(request, {"schedules_list": schedule_list})
+	return render_to_response('schedule/schedule_list.html', context)
+	
+	
+	
 def view_schedule_page(request, schedule_pk):
 	"""
 	Page for viewing the schedule
@@ -109,7 +153,7 @@ def view_schedule_page(request, schedule_pk):
 		
 		entry_text[column_num].append((schedule_entries[i].reading, date_parser.parse_date_to_string(deadline_date), reading_status))
 	
-	context = RequestContext(request, {"title":requested_schedule.title, "all_entries": entry_text, "is_owner": is_owner})
+	context = RequestContext(request, {"title":requested_schedule.title, "all_entries": entry_text, "is_owner": is_owner, "is_subscribed": subscribed})
 
 	return render_to_response('schedule/view_schedule.html', context)
 	

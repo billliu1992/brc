@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+	<title>BRC - Schedules</title>
+
+	<link rel="stylesheet" type="text/css" href='{% static "css/schedule.css" %}'>
+
+	<script src='{% static "js/popupbox.js" %}'></script>
+	
+	<script>
+		/**
+		 *  This script redirects to a page depending on search
+		 */
+		
+		$(function() {
+			$("#search-form").submit(function(event) {
+			
+				event.preventDefault();
+			
+				if($("#search-box").val() != "")
+					location.href = "/schedule/view/" + $("#search-box").val() + "/1/20";
+					
+				return false;
+			});
+			
+			$(".schedule").click(function() {
+				location.href = "/schedule/" + $(this).attr("schedpk");
+			});
+		});
+	</script>
+	
+{% endblock %}
+
+{% block main_content %}
+	<div class="content-box" id="schedules-list-box">
+		<div class="content-box-header">Schedules</div>
+		
+		<div>
+			<form id="search-form">
+				<input type="text" id="search-box" /><button id="search-btn">Search</button>
+			</form>
+		</div>
+		
+		{% for schedule in schedules_list %}
+			<div class="schedule list-item-hover" schedpk="{{schedule.pk}}">
+				<span class="">{{schedule.title}}</span>
+			</div>
+		{% endfor %}
+	</div>
+{% endblock %}

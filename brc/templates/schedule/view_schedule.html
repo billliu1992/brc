@@ -1,13 +1,26 @@
 {% extends "base.html" %}
 {% load staticfiles %}
-{% load custom_tags %}
 
 {% block head %}
 	<title>BRC - View Schedule - {{title}}</title>
 
 	<link rel="stylesheet" type="text/css" href='{% static "css/schedule.css" %}'>
 
-	<script src='{% static "js/popupbox.js" %}'></script>
+	<!-- In place text confirmation library --!>
+	<script src='{% static "js/in_place_confirm.js" %}'></script>
+	<link rel="stylesheet" type="text/css" href='{% static "css/in_place_confirm.css" %}'>
+	
+	<script>
+		$(function() {
+			new TextConfirm(".leave-btn", function() {
+				location.href = "leave/";
+			});
+			
+			$(".join-btn").click(function() {
+				location.href = "join/";
+			});
+		});
+	</script>
 {% endblock %}
 
 {% block main_content %}
@@ -33,6 +46,11 @@
 			<div class="button-row">
 				<a href="/schedule/" class="button small-btn">&laquo; Back</a>
 				<a href="edit/" class="button small-btn">Edit</a>
+				{% if is_subscribed %}
+					<span class="leave-btn button small-btn">Leave</span>
+				{% else %}
+					<span class="join-btn button small-btn">Join</span>
+				{% endif %}
 			</div>
 		</div>
 	</div>
