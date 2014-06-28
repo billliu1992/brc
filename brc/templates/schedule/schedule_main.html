@@ -18,7 +18,7 @@
 {% endblock %}
 
 {% block main_content %}
-	<div class="wrapper-left special-left-wrapper">
+	<div class="wrapper-left">
 		<div class="content-box" id="ongoing-schedules-box">
 			<div class="content-box-header">Your Ongoing Schedules</div>
 			{% for title, schedule_pk in subscribed_schedules %}
@@ -44,7 +44,7 @@
 		</div>
 	</div>
 	
-	<div class="wrapper-left special-left-wrapper">
+	<div class="wrapper-left">
 		<div class="content-box" id="created-schedules-box">
 			<div class="content-box-header">Your Created Schedules</div>
 			{% for title, schedule_pk in created_schedules %}

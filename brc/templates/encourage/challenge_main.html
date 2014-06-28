@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+	<title>BRC - Challenge</title>
+
+	<link rel="stylesheet" type="text/css" href='{% static "css/challenge.css" %}'>
+{% endblock %}
+
+{% block main_content %}
+	<div class="wrapper-left">
+		<div class="content-box" id="box">
+			<div class="content-box-header">Challenge</div>
+			{% for title, schedule_pk in subscribed_schedules %}
+				<div class="schedule list-item-hover" webtitle="{{schedule_pk}}">
+					<div class="schedule-name">{{title}}</div>
+				</div>
+			{% endfor %}
+			<div class="">
+				<a href="view/">Sign up for more schedules &raquo;</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}
