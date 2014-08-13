@@ -11,13 +11,13 @@
 	<div class="wrapper-left">
 		<div class="content-box" id="box">
 			<div class="content-box-header">Challenge</div>
-			{% for title, schedule_pk in subscribed_schedules %}
-				<div class="schedule list-item-hover" webtitle="{{schedule_pk}}">
-					<div class="schedule-name">{{title}}</div>
+			{% for schedule_pk, schedule_name, schedule_consistency, schedule_completion in challenge_status %}
+				<div class="list-item-hover">
+					<div class="schedule-name">{{schedule_name}}</div>
 				</div>
 			{% endfor %}
 			<div class="">
-				<a href="view/">Sign up for more schedules &raquo;</a>
+				<a href="view/">See more challenges &raquo;</a>
 			</div>
 		</div>
 	</div>

@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
@@ -7,6 +8,8 @@ from django.contrib import messages
 from readings.models import *
 from encourage.models import *
 from schedule.models import *
+
+from parser.date_parser import *
 
 def main_page(request):
 	"""
@@ -24,7 +27,41 @@ def main_page(request):
 		challenge_status.append((schedule.pk, schedule.name, result["consistency"], result["completion"]))
 		
 	context = RequestContext(request, {"challenge_status" : challenge_status, "messages" : messages})
-	return render_to_response("encourage/encourage_main.html", context)
+	return render_to_response("encourage/challenge_main.html", context)
+
+
+def challenge_list(request, keywords, page_num, num_per_page):
+	"""
+	Page that shows all the challenges
+	"""
+	
+	if page_num == None:
+		page_num = 1
+	else:
+		try:
+			page_num = int(page_num)
+		except ValueError:
+			page_num = 1
+		
+	if num_per_page == None:
+		num_per_page = 20
+	else:
+		try:
+			num_per_page = int(num_per_page)
+		except ValueError:
+			num_per_page = 20
+	
+	challenges_list = None
+	
+	if(keywords != None):
+		challenges_list = Challenge.objects.get(name__contains = query)
+	else:
+		challenges_list = Challenge.objects.all()
+		
+	challenges_list = challenges_list[(page_num-1) * num_per_page : (page_num) * num_per_page]
+		
+	context = RequestContext(request, {"challenges_list": challenges_list})
+	return render_to_response("encourage/challenge_list.html", {})
 	
 def challenge_page(request, challenge_pk):
 	"""
@@ -73,7 +110,20 @@ def create_challenge(request):
 	"""
 	Creates a team from form data
 	"""
-	pass
+	if request.method == "POST":
+		new_challenge = Challenge()
+	else:
+		all_schedules = ReadingSchedule.objects.filter(start_date__gte = datetime.datetime.today())
+		#turn into JSON for selector
+		list_of_sched = []
+		for schedule in all_schedules:
+			list_of_sched.append({ 'name' : schedule.title, 'date' : parse_date_to_string(schedule.start_date), 'pk' : schedule.pk })
+		
+		print(json.dumps(list_of_sched))
+		
+		context = RequestContext(request, {"all_schedule_json" : json.dumps(list_of_sched)})
+		return render_to_response("encourage/create_challenge.html", context)
+		
 
 def get_consistency(usr, sched):
 	"""

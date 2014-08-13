@@ -10,7 +10,7 @@ urlpatterns = patterns('',
 	url(r'^login', 'brc.views.authenticate_login'),
 	
 	url(r'^readings/', include('readings.urls')),
-	url(r'^encourage/', include('encourage.urls')),
+	url(r'^challenge/', include('encourage.urls')),
 	url(r'^schedule/', include('schedule.urls')),
     # Examples:
     # url(r'^$', 'brc.views.home', name='home'),

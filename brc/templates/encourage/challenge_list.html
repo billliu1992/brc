@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+	<title>BRC - Challenge</title>
+
+	<link rel="stylesheet" type="text/css" href='{% static "css/challenge.css" %}'>
+	<script src='{% static "js/challenge_selector.js" %}'></script>
+	
+	<script>
+		$(function() {
+			$("#search-form").submit(function(event) {
+			
+				event.preventDefault();
+			
+				if($("#search-box").val() != "")
+					location.href = "/challenge/view/" + $("#search-box").val() + "/1/20";
+					
+				return false;
+			});
+			
+			$(".schedule").click(function() {
+				location.href = "/schedule/" + $(this).attr("schedpk");
+			});
+		});
+	</script>
+{% endblock %}
+
+{% block main_content %}
+	<div class="wrapper-full">
+		<div class="content-box" id="box">
+			<div class="content-box-header">Choose a Challenge</div>
+			
+			<form id="search-form">
+				<input type="text" id="search-box" /><button id="search-btn">Search</button>
+			</form>
+			
+			<div class="filter-result">
+				{% for challenge in challenges_list %}
+					<div class="schedule list-item-hover" schedpk="{{schedule.pk}}">
+						<span class="">{{challenge.title}}</span>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+{% endblock %}

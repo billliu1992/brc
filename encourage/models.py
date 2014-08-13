@@ -5,6 +5,7 @@ from schedule.models import ReadingSchedule
 
 # Create your models here.
 class Challenge(models.Model):
+	name = models.CharField(max_length = 50)
 	schedule_name = models.CharField(max_length = 50)
 	schedule = models.ForeignKey(ReadingSchedule)
 	invite_only = models.BooleanField()

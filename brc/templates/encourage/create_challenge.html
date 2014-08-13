@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+	<title>BRC - Create Challenge</title>
+
+	<link rel="stylesheet" type="text/css" href='{% static "css/challenge.css" %}'>
+	<script src='{% static "js/challenge_selector.js" %}'></script>
+	<script>
+		$(function() {
+			var schedule = new ScheduleSelector("#schedule-selector-filter", "#schedule-selector-results", {{ all_schedule_json | safe }});
+		});
+	</script>
+{% endblock %}
+
+{% block main_content %}
+	<div class="content-box" id="box">
+		<div class="content-box-header">Create a Challenge</div>
+		<form action="" method="POST">
+			<div class="form-field">
+				<label for="challenge-name">Challenge Name</label>
+				<input type="text" name="challenge-name" id="challenge-name" />
+			</div>
+			
+			<div class="form-field">
+				<label for="challenge-is-private">Private</label>
+				<input type="checkbox" name="challenge-is-private" id="challenge-is-private" />
+			</div>
+			
+			<div class="form-field schedule-selector">
+				<input type="text" id="schedule-selector-filter" />
+				<div id="schedule-selector-results">
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}
