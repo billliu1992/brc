@@ -16,6 +16,7 @@ a {
 	text-decoration: none;
 }
 
+
 button, input[type="button"], input[type="submit"], .button {
 	background-color: #93CCCB;
 	border-color: #2D5958;
@@ -45,6 +46,7 @@ button, input[type="button"], input[type="submit"], .button {
 }
 
 #logo {
+	color: #000;
 	margin-top: .5em;
 	text-align: center;
 	font-size: 200%;

@@ -1,0 +1,53 @@
+.text-label {
+	display: block;
+}
+
+.form-field {
+	margin: .5em 0;
+}
+
+.form-section-title {
+	font-weight: bold;
+	font-size: 110%;
+}
+
+#create-challenge-box input[type="text"] {
+	width: 40%;
+}
+
+/* Schedule Selector */
+.schedule-selector div {
+	margin: .3em 0;
+}
+
+#schedule-selector-results {
+	padding: .3em;	
+	
+	border-radius: 5px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #ddd;
+	background-color: #ddd;
+}
+
+.schedule-result-entry.schedule-result-selected-entry {
+	color: #000;
+}
+
+.schedule-result-entry {
+	font-size: .8em;
+	color: #aaa;
+}
+
+.schedule-result-entry .entry-name {
+}
+
+.schedule-result-entry .entry-date {
+	float: right;
+}
+
+.button-row {
+	margin-top: 3em;
+}
+
+

@@ -41,27 +41,14 @@ def new_schedule(request):
 	"""
 	Create a new schedule with information from your post data
 	"""
-	new_schedule_name = request.POST["schedule_name"]
-	#start_date_str = request.POST["start_date"]
-	#start_date = date_parser.parse_date(start_date_str)
+	#check to make sure user is logged in
+	if(not request.user.is_authenticated()):
+		messages.error(request, "Log in to edit this schedule!")
+		return redirect('/')
+		
 	
-	#check to make sure that the name is not taken
-	if(len(ReadingSchedule.objects.filter(title = new_schedule_name)) != 0):
-		return redirect('/')	#TODO Change this to something better once templates are done
-	if(new_schedule_name.replace(" ", "").isalnum() == False):
-		return redirect('/')	#TODO Change this to something better once templates are done
-	if(len(new_schedule_name) == 0):
-		return redirect('/')	#TODO Change this to something better once templates are done
-	#if(start_date == None):
-	#	return redirect('/')
-	
-	new_schedule = ReadingSchedule()
-	new_schedule.title = new_schedule_name
-	new_schedule.creator = request.user
-	new_schedule.start_date = datetime.date.today()
-	new_schedule.save()
-	
-	return redirect("/schedule/")
+	context = RequestContext(request, {"new_schedule":True})
+	return render_to_response('schedule/edit_reading_schedule.html', context)
 	
 def view_schedules_list(request, keywords, page_num, num_per_page):
 	"""
@@ -198,6 +185,9 @@ def submit_schedule(request, schedule_pk):
 	Submit modifications to a schedule
 	"""
 	
+	if(request.method != "POST"):
+		return redirect('/schedule')
+	
 	#check to make sure user is logged in
 	if(not request.user.is_authenticated()):
 		messages.error(request, "Log in to edit this schedule!")
@@ -207,12 +197,18 @@ def submit_schedule(request, schedule_pk):
 	new_date = request.POST["start_date"]
 	num_entries = int(request.POST["entries_num"])
 	
-	requested_schedule = ReadingSchedule.objects.get(pk = schedule_pk)
+	requested_schedule = None
+	if(schedule_pk == "0"):
+		requested_schedule = ReadingSchedule()
+		
+		requested_schedule.creator = request.user
+	else:
+		requested_schedule = ReadingSchedule.objects.get(pk = schedule_pk)
 	
-	#makes sure that it is the creator
-	if(request.user != requested_schedule.creator):
-		messages.error(request, "You do not have permission to edit this schedule!")
-		return redirect('/schedules/')
+		#makes sure that it is the creator
+		if(request.user != requested_schedule.creator):
+			messages.error(request, "You do not have permission to edit this schedule!")
+			return redirect('/schedules/')
 	
 	requested_schedule.title = new_name
 	
@@ -240,7 +236,7 @@ def submit_schedule(request, schedule_pk):
 					new_entry.save()
 	
 	messages.success(request, "Schedule successfully submited")
-	return redirect("/schedule/" + schedule_pk)
+	return redirect("/schedule/" + str(requested_schedule.pk))
 	
 		
 def join_schedule(request, schedule_pk):

@@ -54,14 +54,16 @@ def challenge_list(request, keywords, page_num, num_per_page):
 	challenges_list = None
 	
 	if(keywords != None):
-		challenges_list = Challenge.objects.get(name__contains = query)
+		challenges_list = Challenge.objects.filter(name__contains = keywords)
 	else:
 		challenges_list = Challenge.objects.all()
 		
 	challenges_list = challenges_list[(page_num-1) * num_per_page : (page_num) * num_per_page]
-		
+	
+	print(challenges_list)
+	
 	context = RequestContext(request, {"challenges_list": challenges_list})
-	return render_to_response("encourage/challenge_list.html", {})
+	return render_to_response("encourage/challenge_list.html", context)
 	
 def challenge_page(request, challenge_pk):
 	"""
@@ -72,7 +74,7 @@ def challenge_page(request, challenge_pk):
 	
 	if(challenge.invite_only and not request.user in challenge.invited):
 		messages.error("You need an invite to join that Challenge. Please ask the administrator for an invite")
-		return redirect("/encourage")
+		return redirect("/challenge")
 	
 	schedule = challenge.schedule
 	
@@ -111,7 +113,26 @@ def create_challenge(request):
 	Creates a team from form data
 	"""
 	if request.method == "POST":
+		selected_schedule_pk = request.POST["schedule-result-selected"]
+		
+		selected_schedule = ReadingSchedule.objects.get(pk = selected_schedule_pk)
+		
 		new_challenge = Challenge()
+		new_challenge.name = request.POST["challenge-name"]
+		new_challenge.schedule = selected_schedule
+		new_challenge.schedule_name = selected_schedule.title
+		if("challenge-is-private" in request.POST):
+			new_challenge.invite_only = request.POST["challenge-is-private"]
+		else:
+			new_challenge.invite_only = False
+		new_challenge.save()
+		new_challenge.admin.add(request.user)
+		
+		
+		
+		messages.success(request, "Successfully created a challenge")
+		return redirect("/challenge")
+		
 	else:
 		all_schedules = ReadingSchedule.objects.filter(start_date__gte = datetime.datetime.today())
 		#turn into JSON for selector

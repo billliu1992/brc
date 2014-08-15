@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class ReadingSchedule(models.Model):
-	title = models.CharField(max_length=100)
+	title = models.CharField(max_length=100, unique=True)
 	web_friendly_title = models.CharField(max_length=100)
 	creator = models.ForeignKey(User, related_name = "created_sched")
 	signed_up = models.ManyToManyField(User, related_name = "subscribed_sched")

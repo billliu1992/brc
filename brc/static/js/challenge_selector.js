@@ -6,6 +6,12 @@ function ScheduleSelector(filterField, resultsDiv, allSchedulesJson) {
 	this.resultEntryClass = "schedule-result-entry";
 	this.selectedEntryClass = "schedule-result-selected-entry";
 	this.selectedInputId = "schedule-result-selected";
+	this.moreButtonId = "schedule-result-more";
+	
+	this.currentEntries = [];
+	
+	this.currentPageNum = 0;
+	this.numPerPage = 20;
 	
 	this.initSelector();
 }
@@ -19,17 +25,17 @@ ScheduleSelector.prototype = {
 		
 		selectorObj = this;
 		
-		$(this.filterField).keydown(function() {
+		$("#" + this.filterField).keydown(function() {
 			selectorObj.doFilter();
 		});
 		
-		$(this.filterField).keyup(function() {
+		$("#" + this.filterField).keyup(function() {
 			selectorObj.doFilter();
 		});
 	},
 	
 	doFilter : function() {
-		var filterBy = $(this.filterField).val().toLowerCase();
+		var filterBy = $("#" + this.filterField).val().toLowerCase();
 		
 		var filteredEntries = [];
 		
@@ -39,28 +45,63 @@ ScheduleSelector.prototype = {
 			}
 		}
 		
-		this.createResultsHtml(filteredEntries);
+		this.currentEntries = filteredEntries;
+		
+		this.createResultsHtml();
 		
 	},
 	
-	createResultsHtml : function(entries) {
-		$(this.resultsDiv).html("");
-		$(this.resultsDiv).append($("<input type='hidden' id='" + this.selectedInputId + "' />"));
-		for(i = 0; i < entries.length; i++) {
-			entryHtmlObj = $("<div class='" + this.resultEntryClass + "' entrypk='" + this.scheduleObjs[i]['pk'] + "'></div>");
-			entryHtmlObj.append($("<span class='entry-name'>" + this.scheduleObjs[i]['name'] + "</span>"));
-			entryHtmlObj.append($("<span class='entry-dates'>" + this.scheduleObjs[i]['date'] + "</span>"));
+	createResultsHtml : function() {
+		$("#" + this.resultsDiv).html("");
+		
+		for(i = 0; i < Math.min(this.currentEntries.length, this.numPerPage); i++) {
+			var entryHtmlObj = $("<div class='" + this.resultEntryClass + "' entrypk='" + this.scheduleObjs[i]['pk'] + "'></div>");
+			entryHtmlObj.append($("<span class='entry-name'>" + this.currentEntries[i]['name'] + "</span>"));
+			entryHtmlObj.append($("<span class='entry-date'>" + this.currentEntries[i]['date'] + "</span>"));
 			
-			$(this.resultsDiv).append(entryHtmlObj);
+			$("#" + this.resultsDiv).append(entryHtmlObj);
 		}
 		
+		var moreButton = $("<div id='" + this.moreButtonId + "'>Show more results</div>");
+		
+		$("#" + this.resultsDiv).append(moreButton);
+		
+		this.currentPageNum = 0;
+		this.doMoreButtonVisibility();
+		
+		thisSelector = this;
+		
 		$("." + this.resultEntryClass).click(function(event) {
-			$("#" + this.selectedInputId).val($(this).attr("entrypk"));
-			$(this).addClass(this.selectedEntryClass);
-			
-			console.log("YOU CLICKED ME: " + $(this).attr("entrypk"));
+			$("#" + thisSelector.selectedInputId).val($(this).attr("entrypk"));
+			$(this).addClass(thisSelector.selectedEntryClass);
 		});
+		
+		$("#" + this.moreButtonId).click(function() {
+			thisSelector.showMoreResults();
+		});
+	},
+	
+	doMoreButtonVisibility : function() {
+		if((this.currentPageNum + 1) * this.numPerPage < this.currentEntries.length) {
+			$("#" + this.moreButtonId).show();
+		}
+		else {
+			$("#" + this.moreButtonId).hide();
+		}
+	},
+	
+	showMoreResults : function() {
+		this.currentPageNum += 1;
+		
+		for(i = this.currentPageNum * this.numPerPage; i < Math.min(this.currentEntries.length, (this.currentPageNum + 1) * this.numPerPage); i++) {
+			var entryHtmlObj = $("<div class='" + this.resultEntryClass + "' entrypk='" + this.scheduleObjs[i]['pk'] + "'></div>");
+			entryHtmlObj.append($("<span class='entry-name'>" + this.currentEntries[i]['name'] + "</span>"));
+			entryHtmlObj.append($("<span class='entry-date'>" + this.currentEntries[i]['date'] + "</span>"));
+			
+			$("#" + this.moreButtonId).append(entryHtmlObj);
+		}
+		
+		this.doMoreButtonVisibility();
+		
 	}
-	
-	
 }

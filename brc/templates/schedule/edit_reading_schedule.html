@@ -39,8 +39,13 @@
 {% block main_content %}
 	<div class="large-left-wrapper">
 		<div class="content-box" id="edit-schedule-box">
-			<div class="content-box-header">Editing Schedule: {{title}}</div>
-				<form action="submit_schedule/" method="POST">
+			{% if new_schedule %}
+				<div class="content-box-header">Create New Schedule</div>
+					<form action="/schedule/0/edit/submit_schedule/" method="POST">
+			{% else %}
+				<div class="content-box-header">Editing Schedule: {{title}}</div>
+					<form action="submit_schedule/" method="POST">
+			{% endif %}
 					{% csrf_token %}
 					<div class="schedule-input-field">
 						<label for="name">Name:</label>
