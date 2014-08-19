@@ -82,6 +82,7 @@ button, input[type="button"], input[type="submit"], .button {
 	
 	color: #000;
 	text-decoration:none;
+	cursor: pointer;
 }
 
 .menu-item:hover {

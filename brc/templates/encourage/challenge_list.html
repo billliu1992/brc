@@ -19,8 +19,8 @@
 				return false;
 			});
 			
-			$(".schedule").click(function() {
-				location.href = "/schedule/" + $(this).attr("schedpk");
+			$(".challenge").click(function() {
+				location.href = "/challenge/view/" + $(this).attr("challpk");
 			});
 		});
 	</script>
@@ -37,7 +37,7 @@
 			
 			<div class="filter-result">
 				{% for challenge in challenges_list %}
-					<div class="schedule list-item-hover" schedpk="{{schedule.pk}}">
+					<div class="challenge list-item-hover" challpk="{{challenge.pk}}">
 						<span class="">{{challenge.name}}</span>
 					</div>
 				{% endfor %}

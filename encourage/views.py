@@ -65,7 +65,7 @@ def challenge_list(request, keywords, page_num, num_per_page):
 	context = RequestContext(request, {"challenges_list": challenges_list})
 	return render_to_response("encourage/challenge_list.html", context)
 	
-def challenge_page(request, challenge_pk):
+def challenge_page(request, challenge_pk, sort):
 	"""
 	Page for a specific challenge
 	"""
@@ -78,9 +78,12 @@ def challenge_page(request, challenge_pk):
 	
 	schedule = challenge.schedule
 	
-	all_teams = challenge.joined_teams.all()
+	all_teams = ChallengeTeam.objects.filter(challenge = challenge)
 	all_results = []
-	for team in all_teams:
+	
+	for team_pos in range(len(all_teams)):
+		
+		team = all_teams[team_pos]
 		
 		total_consistency = 0
 		total_completion = 0
@@ -91,26 +94,64 @@ def challenge_page(request, challenge_pk):
 			total_consistency += result["consistency"]
 			total_completion += result["completion"]
 			
-		all_results.append((team.pk, team.team_name, total_consistency / float(team.team_members), total_completion / float(team.team_members)))
+		all_results.append((team_pos, team.pk, team.team_name, total_consistency / float(team.team_members), total_completion / float(team.team_members)))
 		
-	all_results.sort(key=lambda item : item[2])
+	if(sort == "consistency"):
+		all_results.sort(key=lambda item : item[2])
+	else:
+		all_results.sort(key=lambda item : item[3])
 	
-	context = RequestContext(request, {"all_results" : all_results})
-	return render_to_response("encourage/encourage_main.html", context)
+	context = RequestContext(request, {"teams" : all_results, "challenge_pk" : challenge_pk})
+	return render_to_response("encourage/challenge_view.html", context)
 
 def join_team(request, challenge_pk, team_pk):
 	"""
 	Joins a challenge for the current user
 	"""
 	if(challenge.invite_only and not request.user in challenge.invited):
-		messages.error("You need an invite to join that Challenge. Please ask the administrator for an invite")
-		return redirect("/encourage")
+		messages.error(request, "You need an invite to join that Challenge. Please ask the administrator for an invite")
+		return redirect("/challenge")
 		
 	request.user.joined_teams.add(ChallengeTeam.objects.get(pk = team_pk))
+
+def view_team_page(request, team_pk):
+	"""
+	View the main page for a team
+	"""
+	
+	selected_team = ChallengeTeam.objects.get(pk = team_pk)
+	
+	users = selected_team.team_members.all()
+	
+	member_names = []
+	for user in users:
+		member_names.append(users.first_name + " " + users.last_name[0])
+	
+	context = RequestContext(request, {"members" : member_names})
+	return render_to_response("encourage/create_team.html", context)
+
+def create_challenge_team(request, challenge_pk):
+	"""
+	Creates a team for a challenge
+	"""
+	if request.method == "POST":
+		team_name = request.POST["team-name"]
+		
+		new_team = ChallengeTeam()
+		new_team.team_name = team_name
+		new_team.save()
+		
+		return redirect("/challenge")
+		
+	else:
+		selected_challenge = Challenge.objects.get(pk = challenge_pk)
+		
+		context = RequestContext(request, {"challenge_name" : selected_challenge.name})
+		return render_to_response("encourage/create_team.html", context)
 	
 def create_challenge(request):
 	"""
-	Creates a team from form data
+	Creates a challenge from form data
 	"""
 	if request.method == "POST":
 		selected_schedule_pk = request.POST["schedule-result-selected"]
@@ -148,7 +189,7 @@ def create_challenge(request):
 
 def get_consistency(usr, sched):
 	"""
-	Get the consistency of the user for the current schedule
+	Get the consistency of the user for the schedule
 	"""
 
 	reading_day_num = datetime.date.today() - sched.start_date

@@ -8,17 +8,20 @@
 {% endblock %}
 
 {% block main_content %}
-	<div class="wrapper-left">
-		<div class="content-box" id="box">
-			<div class="content-box-header">Challenge</div>
-			{% for schedule_pk, schedule_name, schedule_consistency, schedule_completion in challenge_status %}
-				<div class="list-item-hover">
-					<div class="schedule-name">{{schedule_name}}</div>
+	<div class="wrapper-full">
+		{% for schedule_pk, schedule_name, schedule_consistency, schedule_completion in challenge_status %}
+			<div class="content-box" id="box">
+				<div class="content-box-header">Challenge</div>
+					<div class="list-item-hover">
+						<div class="schedule-name">{{schedule_name}}</div>
+					</div>
 				</div>
-			{% endfor %}
-			<div class="">
-				<a href="view/">See more challenges &raquo;</a>
 			</div>
+		{% endfor %}
+		
+		<div class="content-box">
+			<a href="create/">Create a challenge &raquo;</a><a href="view/">See more challenges &raquo;</a>
 		</div>
+		
 	</div>
 {% endblock %}

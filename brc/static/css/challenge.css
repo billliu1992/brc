@@ -1,3 +1,7 @@
+.challenge {
+	cursor: pointer;
+}
+
 .text-label {
 	display: block;
 }

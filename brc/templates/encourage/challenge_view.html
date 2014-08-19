@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+	<title>BRC - Challenge</title>
+
+	<link rel="stylesheet" type="text/css" href='{% static "css/challenge.css" %}' />
+	
+	<script>
+		$(function() {
+			$(".team-entry").click(function() {
+				location.href = "/challenge/team/view/" + $(this).attr("teampk");
+			});
+		});
+	</script>
+{% endblock %}
+
+{% block main_content %}
+	<div class="wrapper-full">
+		<div class="content-box" id="challenge-standings-box">
+			<div class="content-box-header">Challenge Teams:</div>
+			{% for position, pk, name, consistency, completion in teams %}
+				<div class="team-entry" teampk="{{pk}}">
+					<span class="position">{{position}}</span>
+					<span class="name">{{name}}</span>
+					<span class="consistency">{{consistency}}</span>
+					<span class="completion">{{completion}}</span>
+				</div>
+			{% endfor %}
+		</div>
+		
+		<div class="content-box" id="challenge-standings-box">
+			<a href="/challenge/team/create/{{challenge_pk}}">Create team &raquo;</a>
+		</div>
+			
+		</div>
+	</div>
+{% endblock %}

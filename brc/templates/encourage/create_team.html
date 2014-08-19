@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+	<title>BRC - Create Challenge</title>
+
+	<link rel="stylesheet" type="text/css" href='{% static "css/challenge.css" %}'>
+{% endblock %}
+
+{% block main_content %}
+	<div class="content-box" id="create-team-box">
+		<div class="content-box-header">Create a Team</div>
+		<form action="" method="POST">
+			{% csrf_token %}
+			<div class="form-field">
+				<div class="">For Challenge: {{challenge_name}}</div>
+				<label for="team-name" class="text-label">Team Name</label>
+				<input type="text" name="team-name" id="team-name" />
+			</div>
+			<div class="form-field button-row">
+				<button>Submit</button>
+			</div>
+		</form>
+	</div>
+{% endblock %}
