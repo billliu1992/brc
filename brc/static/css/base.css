@@ -16,6 +16,14 @@ a {
 	text-decoration: none;
 }
 
+a, a:visited {
+	color: #628FD9;
+}
+
+a:hover {
+	color: #4770B3;
+}
+
 
 button, input[type="button"], input[type="submit"], .button {
 	background-color: #93CCCB;
@@ -71,7 +79,7 @@ button, input[type="button"], input[type="submit"], .button {
 	margin: .3em 0;
 }
 
-.menu-item {
+a.menu-item {
 	display: inline-block;
 	text-align: center;
 	font-family: Hammersmith One, Arial;
@@ -173,6 +181,7 @@ button, input[type="button"], input[type="submit"], .button {
 	background-color: #FFF;
 	display: none;
 	position: absolute;
+	z-index: 999;
 }
 
 .popup-box .popup-topbar {

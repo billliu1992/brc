@@ -57,10 +57,10 @@
 	
 	<div class="content-box wrapper-right" id="previous-readings-box">
 		<div class="content-box-header">Previous Readings:</div>			
-		{% for reading, webfriendlyreading, month, day, year in readings %}
+		{% for pk, reading, webfriendlyreading, month, day, year in readings %}
 			<div class="reading-entry">
 				<span class="reading-entry-verse">{{reading}}</span>
-				<a class="delete-reading-entry" href="/readings/delete_reading/{{webfriendlyreading}}/{{month}}/{{day}}/{{year}}">Delete?</a>
+				<a class="delete-reading-entry" href="/readings/delete_reading/{{pk}}">Delete?</a>
 				<span class="reading-entry-date">{{month}}/{{day}}/{{year}}</span>
 			</div>
 		{% endfor %}

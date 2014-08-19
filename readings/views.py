@@ -21,13 +21,14 @@ def readings_page(request):
 		
 	#get the readings to put on the view
 	today = datetime.date.today()
-	readings = ReadingEntry.objects.filter(user=request.user, date__lte=today, date__gte=(today - datetime.timedelta(30))).order_by("-date")
+	#readings = ReadingEntry.objects.filter(user=request.user, date__lte=today, date__gte=(today - datetime.timedelta(30))).order_by("-date")
+	readings = ReadingEntry.objects.filter(user=request.user).order_by("-date")
 	num_month = len(readings)
-	readings = readings[:15]	#only get 15 TODO Research how to do this in the query step so you don't grab all of them
+	readings = readings[:15]
 	
 	readings_text = []
 	for reading in readings:
-		readings_text.append((reading.reading, reading.reading.replace(" ", ""), reading.date.month, reading.date.day, reading.date.year))
+		readings_text.append((reading.pk, reading.reading, reading.reading.replace(" ", ""), reading.date.month, reading.date.day, reading.date.year))
 	
 	consistency_month = percent_parser.parse_percent(get_consistency_month(request.user), True)
 	consistency_week = percent_parser.parse_percent(get_consistency_week(request.user), True)
@@ -50,12 +51,17 @@ def add_reading(request):
 	date = date_parser.parse_date(date_text)
 	if(date == None):
 		messages.error(request, "Incorrect date format!")
-		return redirect("/profile/")
+		return redirect("/readings/")
 	#parse the reading
 	full_readings = reading_parser.parse_reading(reading_text)
 	if(full_readings == None):
 		messages.error(request, "Incorrect verse format!")
-		return redirect("/profile/")
+		return redirect("/readings/")
+		
+	today = datetime.datetime.today()
+	if(today < date):
+		messages.error(request, "Please enter a date before today")
+		return redirect("/readings/") 
 	
 	for full_reading in full_readings:
 		reading = ReadingEntry()
@@ -67,22 +73,21 @@ def add_reading(request):
 	messages.success(request, "Successfully entered a reading!")
 	return redirect('/readings/')
 	
-def delete_reading(request, reading, month, day, year):
+def delete_reading(request, reading_pk):
 	"""
 	Delete the reading at date for the current user
 	"""
 	if(request.method == "GET"):
 		redirect('/readings')
 	
-	full_reading = reading_parser.parse_reading(reading)
-	if(full_reading == None):
-		return redirect("/")	#TODO Once templates are done, make this redirect/render something prettier
+	try:
+		ReadingEntry.objects.get(pk = reading_pk).delete()
+	except e:
+		messages.error(request, "Error deleting reading")
+		return redirect("/readings")
 	
-	date_obj = datetime.datetime(int(year), int(month), int(day))
-	
-	ReadingEntry.objects.get(date = date_obj, reading = full_reading[0], user = request.user).delete()
-	
-	return redirect('/readings/')
+	messages.success(request, "Reading successfully deleted")
+	return redirect('/readings')
 	
 def get_consistency_month(current_user):
 	"""

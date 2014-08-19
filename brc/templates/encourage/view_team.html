@@ -6,10 +6,18 @@
 
 	<link rel="stylesheet" type="text/css" href='{% static "css/challenge.css" %}' />
 	
+	<!-- In place text confirmation library -->
+	<script src='{% static "js/in_place_confirm.js" %}'></script>
+	<link rel="stylesheet" type="text/css" href='{% static "css/in_place_confirm.css" %}'>
+	
 	<script>
 		$(function() {
 			$(".team-entry").click(function() {
 				location.href = "/challenge/team/view/" + $(this).attr("teampk");
+			});
+			
+			new TextConfirm(".leave-link", function() {
+				location.href = "/challenge/team/leave/{{team_pk}}";
 			});
 		});
 	</script>
@@ -18,7 +26,13 @@
 {% block main_content %}
 	<div class="wrapper-left">
 		<div class="content-box" id="members-list-box">
-			<div class="content-box-header">Members:</div>
+			<div class="content-box-header">Team {{name}}:</div>
+			<div>
+				Completion: {{completion}}
+			</div>
+			<div>
+				Consistency: {{consistency}}
+			</div>
 		</div>
 	</div>
 	<div class="wrapper-right">
@@ -29,11 +43,15 @@
 					<span class="member">{{member}}
 				</div>
 			{% endfor %}
+			{% if join_control == "join" %}
+				<a href="/challenge/team/join/{{team_pk}}">Join team &raquo;</a>
+			{% elif join_control == "leave" %}
+				<a class="leave-link" href="#">Leave team &raquo;</a>
+			{% elif join_control == "invite" %}
+				<span>Invite Only</span>
+			{% endif %}
 		</div>
-		
-		<div class="content-box" id="challenge-standings-box">
-			<a href="/challenge/team/create/{{challenge_pk}}">Create team &raquo;</a>
-		</div>
+			
 			
 		</div>
 	</div>

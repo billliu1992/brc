@@ -1,3 +1,15 @@
+#text-conf {
+	color: #4770B3;
+}
+
 #text-conf-yes, #text-conf-no {
 	cursor: pointer;
+}
+
+#text-conf-yes {
+	color: #73E65C;
+}
+
+#text-conf-no {
+	color:  #FF4040;
 }

@@ -103,6 +103,8 @@ def view_schedule_page(request, schedule_pk):
 	requested_schedule = ReadingSchedule.objects.get(pk = schedule_pk)
 	readings = ReadingEntry.objects.filter(date__gte = requested_schedule.start_date, user = request.user)
 	
+	print len(readings)
+	
 	subscribed = requested_schedule in request.user.subscribed_sched.all()
 	is_owner = requested_schedule in request.user.created_sched.all()
 	
@@ -119,7 +121,7 @@ def view_schedule_page(request, schedule_pk):
 	
 	startdate = requested_schedule.start_date
 	for i in range(len(schedule_entries)):
-		deadline_date = startdate + datetime.timedelta(days = schedule_entries[i].day_num)
+		deadline_date = startdate + datetime.timedelta(days = (schedule_entries[i].day_num - 1))
 
 		column_num = i / column_length
 		
@@ -263,7 +265,7 @@ def get_todays_reading(current_user):
 	"""
 	schedules = []
 	
-	subscribed_schedules = current_user.subscribed_sched.all()
+	subscribed_schedules = current_user.subscribed_sched.filter()
 	today = datetime.date.today()
 	
 	for sched in subscribed_schedules:
@@ -275,7 +277,8 @@ def get_todays_reading(current_user):
 		
 		for entry in todays_entries:
 			readings.append(entry.reading)
-			
-		schedules.append([sched.title, readings])
+		
+		if(today <= sched.start_date):
+			schedules.append([sched.title, readings])
 		
 	return schedules

@@ -39,4 +39,12 @@
 
 #sign-up-btn {
 }
+
+#login-link {
+	cursor: pointer;
+}
+
+.popup-close {
+	cursor: pointer;
+}
 	

@@ -9,19 +9,20 @@
 
 {% block main_content %}
 	<div class="wrapper-full">
-		{% for schedule_pk, schedule_name, schedule_consistency, schedule_completion in challenge_status %}
-			<div class="content-box" id="box">
-				<div class="content-box-header">Challenge</div>
-					<div class="list-item-hover">
-						<div class="schedule-name">{{schedule_name}}</div>
-					</div>
+		{% for challenge_pk, team_pk, schedule_pk, challenge_name, team_name, schedule_name, consistency, completion in challenge_status %}
+			<div class="content-box challenge-entry-box">
+				<div class="content-box-header">
+					<a href="/challenge/view/{{challenge_pk}}">{{challenge_name}}</a> - 
+					<span class="team-name-header"><a href="/challenge/team/view/{{team_pk}}">{{team_name}}</a></span>
 				</div>
+				<div class="schedule-name">Reading: <a href="/schedule/{{schedule_pk}}">{{schedule_name}}</a></div>
+				<div class="schedule-stats">Consistency: {{consistency}}</div>
+				<div class="schedule-stats">Completion: {{completion}}</div>
 			</div>
 		{% endfor %}
 		
 		<div class="content-box">
 			<a href="create/">Create a challenge &raquo;</a><a href="view/">See more challenges &raquo;</a>
 		</div>
-		
 	</div>
 {% endblock %}

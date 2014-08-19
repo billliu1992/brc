@@ -34,21 +34,29 @@
 				<div>
 					Past 30 days: {{consistency_month}}
 				</div>
+				
+				<a href="/readings/">Readings &raquo;</a>
 			</div>
 		</div>
 		<div class="wrapper-right">
-			<div class="content-box" id="standings-box">
-				<div class="content-box-header">Standings</div>
+			<div class="content-box" id="reading-box">
+				<div class="content-box-header">Today's Reading</div>						
+				{% for schedule in todays_reading %}
+					<div>
+						<div class="content-box-title">{{ schedule.0 }}:</div>
+						{% for readings in schedule.1 %}
+							<div class="todays-reading-entry">{{readings}}</div>
+						{% endfor %}
+					</div>
+				{% endfor %}
+			
+				<a href="/readings/">Schedules &raquo;</a>
 			</div>
 		</div>
-		<div class="content-box"  id="reading-box">
-			<div class="content-box-header">Today's Reading</div>						
-			{% for schedule in todays_reading %}
-				<div class="content-box-title">{{ schedule.0 }}:</div>
-				{% for readings in schedule.1 %}
-					<div class="todays-reading-entry">{{readings}}</div>
-				{% endfor %}
-			{% endfor %}
+		
+		<div class="content-box"  id="standings-box">
+			<div class="content-box-header">Standings</div>
+			<a href="/readings/">Challenges &raquo;</a>
 		</div>
 
 

@@ -10,16 +10,19 @@
 		<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
 		<script src='{% static "js/popupbox.js" %}'></script>
 		
+		{% if message %}
+		<script>
+			$(document).ready(function() {
+				popUp('{{popup_id}}', '{{message}}');
+			});
+		</script>
+		{% endif %}
+		
 	</head>
 	<body>
 		<div id="all-content">
-			
-			
 			<div id="front-content">
 				<div id="main-content">
-					<div id="header">
-						{#temp#}BRC
-					</div>
 					<div id="main-body">
 						<div id="content-left">
 							<div class="front-text">
@@ -30,9 +33,9 @@
 						</div>
 						<div id="content-right">
 							<div class="front-buttons">
-								<button id="sign-up-btn">Sign up!</button>
+								<button id="sign-up-btn" onclick="popUp('register-box')">Sign up!</button>
 								<br />
-								<a href="#" onclick="popUp('login-box')">Sign in</a>
+								<span id="login-link" onclick="popUp('login-box')">Sign in</span>
 							</div>
 						</div>
 					</div>
@@ -41,16 +44,50 @@
 				</div>
 			</div>
 		
-			
+			<div id="register-box" class="popup-box">
+				<div class="popup-topbar">
+					<span class="popup-title">Register</span>
+					<a class="popup-close">X</a>
+				</div>
+				<div class="popup-main">
+					<form action="/register" method="POST">
+						{% csrf_token %}
+						<div class="notif-error error"></div>
+						<div>
+							<label for="first-name">First name:</label>
+							<input type="text" name="first-name" />
+						</div>
+						<div>
+							<label for="last-name">Last name:</label>
+							<input type="text" name="last-name" />
+						</div>
+						<div>
+							<label for="email">E-mail:</label>
+							<input type="text" name="email" />
+						</div>
+						<div>
+							<label for="password1">Password:</label>
+							<input type="password" name="password1" />
+						</div>
+						<div>
+							<label for="password2">Password (again):</label>
+							<input type="password" name="password2" />
+						</div>
+						
+						<button>Register</button>
+					</form>
+				</div>
+			</div>
 			
 			<div id="login-box" class="popup-box">
 				<div class="popup-topbar">
 					<span class="popup-title">Login</span>
-					<a href="#" class="popup-close">X</a>
+					<a class="popup-close">X</a>
 				</div>
 				<div class="popup-main">
 					<form name="loginForm" action="login" method="post">
 						{% csrf_token %}
+						<div class="notif-error error"></div>
 						<table>
 							<tr>
 								<td>
@@ -65,7 +102,7 @@
 									<label for="password">Password: </label>
 								</td>
 								<td>
-									<input type="text" name="password" id="password">
+									<input type="password" name="password" id="password">
 								</td>
 							</tr>
 							<tr>

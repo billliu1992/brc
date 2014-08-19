@@ -22,9 +22,10 @@ def main_page(request):
 	
 	for team in all_joined_teams:
 		schedule = team.challenge.schedule
+		challenge = team.challenge
 		
 		result = get_consistency(request.user, schedule)
-		challenge_status.append((schedule.pk, schedule.name, result["consistency"], result["completion"]))
+		challenge_status.append((challenge.pk, team.pk, schedule.pk, challenge.name, team.team_name, schedule.title, result["consistency"], result["completion"]))
 		
 	context = RequestContext(request, {"challenge_status" : challenge_status, "messages" : messages})
 	return render_to_response("encourage/challenge_main.html", context)
@@ -60,8 +61,6 @@ def challenge_list(request, keywords, page_num, num_per_page):
 		
 	challenges_list = challenges_list[(page_num-1) * num_per_page : (page_num) * num_per_page]
 	
-	print(challenges_list)
-	
 	context = RequestContext(request, {"challenges_list": challenges_list})
 	return render_to_response("encourage/challenge_list.html", context)
 	
@@ -85,16 +84,9 @@ def challenge_page(request, challenge_pk, sort):
 		
 		team = all_teams[team_pos]
 		
-		total_consistency = 0
-		total_completion = 0
-		
-		for user in team.team_members:
-			result = get_consistency(user, schedule)
+		team_consistency, team_completion = get_team_results(team.team_members.all(), schedule)
 			
-			total_consistency += result["consistency"]
-			total_completion += result["completion"]
-			
-		all_results.append((team_pos, team.pk, team.team_name, total_consistency / float(team.team_members), total_completion / float(team.team_members)))
+		all_results.append((team_pos, team.pk, team.team_name, team_consistency, team_completion))
 		
 	if(sort == "consistency"):
 		all_results.sort(key=lambda item : item[2])
@@ -104,15 +96,31 @@ def challenge_page(request, challenge_pk, sort):
 	context = RequestContext(request, {"teams" : all_results, "challenge_pk" : challenge_pk})
 	return render_to_response("encourage/challenge_view.html", context)
 
-def join_team(request, challenge_pk, team_pk):
+def join_team(request, team_pk):
 	"""
 	Joins a challenge for the current user
 	"""
-	if(challenge.invite_only and not request.user in challenge.invited):
+	requested_team = ChallengeTeam.objects.get(pk = team_pk)
+	
+	if(requested_team.challenge.invite_only and not request.user in requested.team.challenge.invited):
 		messages.error(request, "You need an invite to join that Challenge. Please ask the administrator for an invite")
 		return redirect("/challenge")
 		
-	request.user.joined_teams.add(ChallengeTeam.objects.get(pk = team_pk))
+	request.user.joined_teams.add(requested_team)
+	messages.success(request, "You have successfully joined the team: " + requested_team.team_name)
+	return redirect("/challenge/team/view/" + str(team_pk))
+	
+def leave_team(request, team_pk):
+	requested_team = ChallengeTeam.objects.get(pk = team_pk)
+	
+	if(not request.user in requested_team.team_members.all()):
+		messages.error(request, "You cannot leave a team that you are not in")
+		return redirect("/challenge")
+		
+	requested_team.team_members.remove(request.user)
+	
+	messages.success(request, "You have successfully left the team: " + requested_team.team_name)
+	return redirect("/challenge")
 
 def view_team_page(request, team_pk):
 	"""
@@ -123,12 +131,25 @@ def view_team_page(request, team_pk):
 	
 	users = selected_team.team_members.all()
 	
-	member_names = []
-	for user in users:
-		member_names.append(users.first_name + " " + users.last_name[0])
+	team_name = selected_team.team_name
 	
-	context = RequestContext(request, {"members" : member_names})
-	return render_to_response("encourage/create_team.html", context)
+	all_results = get_team_results(users, selected_team.challenge.schedule)
+	team_consistency = all_results["consistency"]
+	team_completion = all_results["completion"]
+	
+	member_names = []
+	for usr in users:
+		print usr.first_name + " " + usr.last_name
+		member_names.append(usr.first_name + " " + usr.last_name)
+		
+	join_control = "join"
+	if(request.user in selected_team.team_members.all()):
+		join_control = "leave"
+	elif(selected_team.invite_only and not request.user in selected_team.invited.all()):
+		join_control = "invite"
+	
+	context = RequestContext(request, { "team_pk" : team_pk, "name" : team_name, "members" : member_names, "consistency" : team_consistency, "completion" : team_completion, "join_control" : join_control, "messages" : messages })
+	return render_to_response("encourage/view_team.html", context)
 
 def create_challenge_team(request, challenge_pk):
 	"""
@@ -139,9 +160,13 @@ def create_challenge_team(request, challenge_pk):
 		
 		new_team = ChallengeTeam()
 		new_team.team_name = team_name
+		
+		selected_challenge = Challenge.objects.get(pk = challenge_pk)
+		new_team.challenge = selected_challenge
+		
 		new_team.save()
 		
-		return redirect("/challenge")
+		return redirect("/challenge/view/" + str(challenge_pk))
 		
 	else:
 		selected_challenge = Challenge.objects.get(pk = challenge_pk)
@@ -185,7 +210,29 @@ def create_challenge(request):
 		
 		context = RequestContext(request, {"all_schedule_json" : json.dumps(list_of_sched)})
 		return render_to_response("encourage/create_challenge.html", context)
+	
+def get_team_results(usrs, sched):
+	"""
+	Get the consistency and completion of an entire team
+	"""	
+	
+	total_consistency = 0
+	total_completion = 0
+	for user in usrs:
+		result = get_consistency(user, sched)
 		
+		total_consistency += result["consistency"]
+		total_completion += result["completion"]
+	
+	team_consistency = 0
+	team_completion = 0
+		
+	if(len(usrs) != 0):
+		team_consistency = total_consistency / float(len(usrs))
+		team_completion = total_completion / float(len(usrs))
+		
+	return { "consistency" : team_consistency, "completion" : team_completion }
+
 
 def get_consistency(usr, sched):
 	"""

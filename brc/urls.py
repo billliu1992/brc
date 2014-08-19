@@ -5,10 +5,11 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-	url(r'^$', 'brc.views.index'),
+	url(r'^(?:\?err=(?P<error_message>\w+))?$', 'brc.views.index'),
 	url(r'^profile', 'brc.views.profile_page'),
+	url(r'^register', 'brc.views.new_user_register'),
 	url(r'^login', 'brc.views.authenticate_login'),
-	
+	url(r'^logout$', 'brc.views.logout_request'),
 	url(r'^readings/', include('readings.urls')),
 	url(r'^challenge/', include('encourage.urls')),
 	url(r'^schedule/', include('schedule.urls')),

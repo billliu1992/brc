@@ -1,5 +1,10 @@
-function popUp(popUpId)
+function popUp(popUpId, errorMessage)
 {
+	if(typeof errorMessage !== "undefined")
+	{
+		$("#" + popUpId + " .notif-error").text(errorMessage);
+	}
+
 	var windowWidth = $(document).width();
 	var windowHeight = $(document).height();
 	var popUpWidth = $("#" + popUpId).width();
@@ -13,11 +18,13 @@ function popUp(popUpId)
 	bgObj.click(function()
 		{
 			closePopUp(popUpId);
+			$("#" + popUpId + " .notif-error").text("");
 		});
 		
 	$(".popup-close").click(function()
 		{
 			closePopUp(popUpId);
+			$("#" + popUpId + " .notif-error").text("");
 		});
 }
 
