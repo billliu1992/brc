@@ -9,7 +9,7 @@ from readings.models import *
 from encourage.models import *
 from schedule.models import *
 
-from parser.date_parser import *
+from parser_util.date_parser import *
 
 def main_page(request):
 	"""

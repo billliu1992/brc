@@ -7,7 +7,7 @@ from django.contrib import messages
 from schedule.models import ReadingSchedule, ReadingScheduleEntry
 from readings.models import *
 
-from parser import date_parser, reading_parser
+from parser_util import date_parser, reading_parser
 
 def all_schedules_page(request):
 	"""	

@@ -7,7 +7,7 @@ from django.contrib import messages
 
 from readings.models import ReadingEntry
 
-from parser import date_parser, reading_parser, percent_parser
+from parser_util import date_parser, reading_parser, percent_parser
 
 def readings_page(request):
 	"""
