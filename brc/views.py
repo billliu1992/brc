@@ -22,15 +22,16 @@ def index(request, error_message):
 	
 	popup_id = None
 	full_message = None
-	if(request.GET["err"] == "pwnomatch"):
-		popup_id = "register-box"
-		full_message = "Your passwords did not match"
-	elif(request.GET["err"] == "emailexists"):
-		popup_id = "register-box"
-		full_message = "That e-mail already exists"
-	elif(request.GET["err"] == "wrongcred"):
-		popup_id = "login-box"
-		full_message = "Your e-mail and/or password is incorrect"
+	if("err" in request.GET):
+		if(request.GET["err"] == "pwnomatch"):
+			popup_id = "register-box"
+			full_message = "Your passwords did not match"
+		elif(request.GET["err"] == "emailexists"):
+			popup_id = "register-box"
+			full_message = "That e-mail already exists"
+		elif(request.GET["err"] == "wrongcred"):
+			popup_id = "login-box"
+			full_message = "Your e-mail and/or password is incorrect"
 	
 	context = RequestContext(request, {"popup_id" : popup_id, "message" : full_message})
 	return render_to_response('front.html', context)
