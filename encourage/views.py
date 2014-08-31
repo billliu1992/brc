@@ -145,7 +145,7 @@ def view_team_page(request, team_pk):
 	join_control = "join"
 	if(request.user in selected_team.team_members.all()):
 		join_control = "leave"
-	elif(selected_team.invite_only and not request.user in selected_team.invited.all()):
+	elif(selected_team.challenge.invite_only and not request.user in selected_team.invited.all()):
 		join_control = "invite"
 	
 	context = RequestContext(request, { "team_pk" : team_pk, "name" : team_name, "members" : member_names, "consistency" : team_consistency, "completion" : team_completion, "join_control" : join_control, "messages" : messages })

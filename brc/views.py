@@ -57,7 +57,9 @@ def new_user_register(request):
 	new_user.last_name = last_name
 	new_user.save()
 
-	login(request, new_user)
+	user = authenticate(username=email, password = password1)
+
+	login(request, user)
 	return redirect("/profile")
 	
 def authenticate_login(request):
